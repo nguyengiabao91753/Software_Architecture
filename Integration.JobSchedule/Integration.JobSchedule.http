@@ -1,0 +1,6 @@
+@Integration.JobSchedule_HostAddress = http://localhost:5237
+
+GET {{Integration.JobSchedule_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
