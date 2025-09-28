@@ -9,6 +9,8 @@
   <ItemGroup>
     <ProjectReference Include="..\Share.Application\Shares.Application.csproj" />
     <ProjectReference Include="..\Share.Database\Shares.Database.csproj" />
+    <ProjectReference Include="..\Shares.Application\Shares.Application.csproj" />
+    <ProjectReference Include="..\Shares.Database\Shares.Database.csproj" />
   </ItemGroup>
 
 </Project>
