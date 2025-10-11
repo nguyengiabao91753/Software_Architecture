@@ -6,7 +6,7 @@ namespace Services.OrderAPI.Domain.Entities;
 
 public partial class OrderItem
 {
-    [Key]
+   
     public Guid Id { get; set; } 
 
     public Guid OrderId { get; set; }
