@@ -11,10 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Share.Application\Shares.Application.csproj" />
-    <ProjectReference Include="..\Share.Infrastructure\Shares.Infrastructure.csproj" />
-    <ProjectReference Include="..\Shares.Application\Shares.Application.csproj" />
-    <ProjectReference Include="..\Shares.Infrastructure\Shares.Infrastructure.csproj" />
+
   </ItemGroup>
 
 </Project>

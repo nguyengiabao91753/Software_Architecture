@@ -5,8 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Shares.Application.IService;
-using Shares.Servicer;
 
 namespace Shares.SystemConfig.Dependencies;
 public static class DependencyInjection
@@ -19,7 +17,7 @@ public static class DependencyInjection
     public static void AddServiceScoped(this IHostApplicationBuilder builder)
     {
         
-        builder.Services.AddScoped<IExample, Example>();
+       
     }
 
     public static void AddServiceTransient(this IHostApplicationBuilder builder)
