@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
 namespace Services.OrderAPI.Domain.Entities;
 
 public partial class Order
 {
-    
-    public Guid Id { get; set; } 
+    public Guid Id { get; set; }
 
     public Guid CustomerId { get; set; }
 
     public Guid RestaurantId { get; set; }
 
     public Guid TrackingId { get; set; }
+
+    public Guid? VoucherId { get; set; }
 
     public decimal Price { get; set; }
 

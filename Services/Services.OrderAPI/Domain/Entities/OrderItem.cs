@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
 namespace Services.OrderAPI.Domain.Entities;
 
 public partial class OrderItem
 {
-   
-    public Guid Id { get; set; } 
+    public Guid Id { get; set; }
 
     public Guid OrderId { get; set; }
 
