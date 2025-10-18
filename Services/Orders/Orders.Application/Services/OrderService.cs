@@ -1,4 +1,5 @@
 ﻿
+using Integrations.Messaging.Events;
 using Microsoft.EntityFrameworkCore;
 using Orders.Application.Data;
 using Orders.Application.Dtos;
@@ -6,16 +7,19 @@ using Orders.Application.IServices;
 using Orders.Application.Mapping;
 using Orders.Domain.Models;
 using Orders.Domain.ValueObjects;
+using Orders.Messaging.Interfaces;
 
 namespace Services.OrderAPI.Application.Services;
 
 public class OrderService : IOrderService
 {
     private readonly IApplicationDbContext _db;
+    private readonly IOrderEventPublisher _eventPublisher;
 
-    public OrderService(IApplicationDbContext db)
+    public OrderService(IApplicationDbContext db, IOrderEventPublisher eventPublisher)
     {
         _db = db;
+        _eventPublisher = eventPublisher;
     }
 
     public async Task<ResultService<OrderDto>> GetById(Guid id)
@@ -91,7 +95,26 @@ public class OrderService : IOrderService
 
                 await _db.Orders.AddAsync(newOrder);
                 await _db.SaveChangesAsync();
-                
+
+                var orderPlcedEvent = new OrderPlacedEvent
+                {
+                    OrderId = newOrder.Id.Value,
+                    CustomerId = newOrder.CustomerId.Value,
+                    RestaurantId = newOrder.RestaurantId.Value,
+                    TrackingId = newOrder.TrackingId.Value,
+                    VoucherId = newOrder.VoucherId?.Value,
+                    TotalAmount = newOrder.TotalAmount,
+                    OrderItems = newOrder.OrderItems.Select(oi => new OrderItemEvent
+                    {
+                        ProductId = oi.ProductId.Value,
+                        Quantity = oi.Quantity,
+                        Price = oi.Price,
+                        SubTotal = oi.SubTotal
+                    }).ToList()
+                };
+
+                await _eventPublisher.PublishOrderPlacedAsync(orderPlcedEvent);
+
                 transaction.Commit();
                 rs.Data = OrderMappingData.ToOrderDto(newOrder);
                 rs.IsSuccess = true;

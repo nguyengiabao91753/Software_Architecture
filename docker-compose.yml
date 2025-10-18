@@ -1,0 +1,42 @@
+version: '3.9'
+
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: orders_db
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Admin123*
+    ports:
+      - "1433:1433"
+    networks:
+      - orders-network
+
+  orders.api:
+    container_name: orders_api
+    build:
+      context: .
+      dockerfile: Services/Orders/Orders.API/Dockerfile
+    environment:
+      - ConnectionStrings__Database=Server=db,1433;Database=OrderDb;User Id=sa;Password=Admin123*;TrustServerCertificate=True;
+      - ASPNETCORE_URLS=http://+:7003
+    depends_on:
+      - db
+    ports:
+      - "7003:7003"
+    networks:
+      - orders-network
+
+  payment.api:
+    container_name: payment_api
+    image: ${DOCKER_REGISTRY-}paymentapi
+    build:
+      context: .
+      dockerfile: Services/Payment/Payment.API/Dockerfile
+    ports:
+      - "7005:7005"
+
+networks:
+  orders-network:
+    driver: bridge
+

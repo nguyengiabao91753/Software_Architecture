@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Orders.Application.Dtos;
 using Orders.Application.IServices;
+using Orders.Domain.Enums;
 
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -15,18 +16,23 @@ public class OrderAPIController : ControllerBase
     {
         _orderService = orderService;
     }
-    // GET: api/<OrderAPIController>
-    [HttpGet]
-    public IEnumerable<string> Get()
+
+    [HttpGet("get/{id}")]
+    public async Task<IActionResult> Get(string id)
     {
-        return new string[] { "value1", "value2" };
+        var rs = await _orderService.GetById(Guid.Parse(id));
+        if (!rs.IsSuccess)
+            return BadRequest(rs);
+        return Ok(rs);
     }
 
-    // GET api/<OrderAPIController>/5
-    [HttpGet("{id}")]
-    public string Get(int id)
+    [HttpGet("get/tracking/{id}")]
+    public async Task<IActionResult> GetByTracking(string id)
     {
-        return "value";
+        var rs = await _orderService.GetByTrackingId(Guid.Parse(id));
+        if (!rs.IsSuccess)
+            return BadRequest(rs);
+        return Ok(rs);
     }
 
     // POST api/<OrderAPIController>
@@ -39,15 +45,31 @@ public class OrderAPIController : ControllerBase
         return Ok(rs);
     }
 
-    // PUT api/<OrderAPIController>/5
-    [HttpPut("{id}")]
-    public void Put(int id, [FromBody] string value)
+    
+    [HttpPut("approve")]
+    public async Task<IActionResult> ApproveOrder([FromBody] OrderDto orderDto)
     {
+        
+        var updatedOrderDto = orderDto with { OrderStatus = OrderStatus.Approved.ToString() };
+        var rs = await _orderService.Update(updatedOrderDto);
+        if (!rs.IsSuccess)
+            return BadRequest(rs);
+
+        return Ok(rs);
     }
 
-    // DELETE api/<OrderAPIController>/5
-    [HttpDelete("{id}")]
-    public void Delete(int id)
+    [HttpPut("paid")]
+    public async Task<IActionResult> PayOrder([FromBody] string orderId)
     {
+        var orderRs = await _orderService.GetById(Guid.Parse(orderId));
+        if (!orderRs.IsSuccess || orderRs.Data == null)
+            return BadRequest(orderRs);
+
+        var updatedOrderDto = orderRs.Data with { OrderStatus = OrderStatus.Paid.ToString() };
+        var rs = await _orderService.Update(updatedOrderDto);
+        if (!rs.IsSuccess)
+            return BadRequest(rs);
+
+        return Ok(rs);
     }
 }
