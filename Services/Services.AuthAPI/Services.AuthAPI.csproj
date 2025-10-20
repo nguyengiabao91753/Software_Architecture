@@ -7,15 +7,23 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.20" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.3.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.12" />
+    <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="9.0.10" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="7.1.2" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.1.2" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Orders.Infrastructure\Orders.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Shares\SecShare.Infrastructure\Shares.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Shares\Shares.Base\Shares.Base.csproj" />
+    <ProjectReference Include="..\..\Shares\Shares.Core\Shares.Core.csproj" />
+    <ProjectReference Include="..\..\Shares\Shares.Helper\Shares.Helper.csproj" />
+    <ProjectReference Include="..\..\Shares\Shares.Servicers\Shares.Servicer.csproj" />
     <ProjectReference Include="..\..\Shares\Shares.SystemConfig\Shares.SystemConfig.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Controllers\" />
   </ItemGroup>
 
 </Project>
