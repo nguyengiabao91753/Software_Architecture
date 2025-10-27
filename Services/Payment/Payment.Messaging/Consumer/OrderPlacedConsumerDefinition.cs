@@ -16,17 +16,11 @@ public class OrderPlacedConsumerDefinition : ConsumerDefinition<OrderPlacedConsu
 
     protected override void ConfigureConsumer(IReceiveEndpointConfigurator endpointConfigurator, IConsumerConfigurator<OrderPlacedConsumer> consumerConfigurator)
     {
-      
 
-        //if (endpointConfigurator is IRabbitMqReceiveEndpointConfigurator rmq)
-        //{
-        //    rmq.Bind<OrderPlacedEvent>(s =>
-        //    {
-                
-        //        s.ExchangeType = "fanout";
-        //    });
-        //}
 
-        
+        //Nếu dùng Fanount thì không cần cấu hình gỉ cả ở đây
+        //Đây là nơi cấu hình cho các routing key, headers nếu dùng Direct, Topic, Headers exchange
+
+
     }
 }
