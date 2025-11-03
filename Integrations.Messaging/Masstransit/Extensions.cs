@@ -19,6 +19,7 @@ public static class Extensions
         {
             config.SetKebabCaseEndpointNameFormatter();
 
+
             if (assembly != null)
                 config.AddConsumers(assembly);
 
@@ -30,6 +31,8 @@ public static class Extensions
                     host.Password(configuration["MessageBroker:Password"]);
                 });
                 configurator.ConfigureEndpoints(context);
+                configurator.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(5)));
+                configurator.UseInMemoryOutbox();
             });
         });
 

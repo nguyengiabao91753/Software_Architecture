@@ -96,6 +96,8 @@ public class OrderService : IOrderService
                 await _db.Orders.AddAsync(newOrder);
                 await _db.SaveChangesAsync();
 
+
+
                 var orderPlcedEvent = new OrderPlacedEvent
                 {
                     OrderId = newOrder.Id.Value,
@@ -114,6 +116,9 @@ public class OrderService : IOrderService
                 };
 
                 await _eventPublisher.PublishOrderPlacedAsync(orderPlcedEvent);
+
+                // gọi api payment
+                // payment trả về 200 -> gọi tiếp api inventory -> inventory trả về 200 ->....
 
                 transaction.Commit();
                 rs.Data = OrderMappingData.ToOrderDto(newOrder);
