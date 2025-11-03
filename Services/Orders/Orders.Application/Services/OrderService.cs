@@ -27,17 +27,19 @@ public class OrderService : IOrderService
         var rs = new ResultService<OrderDto>();
         try
         {
-            var entity = OrderMappingData.ToOrderDto(await _db.Orders.FindAsync(id));
-            if (entity == null)
+            var order = await _db.Orders
+                .Include(o => o.OrderItems)
+                .FirstOrDefaultAsync(o => o.Id == OrderId.Of(id));
+
+            if (order == null)
             {
                 rs.IsSuccess = false;
                 rs.Message = "Order not found";
                 return rs;
             }
-            rs.Data = entity;
+
+            rs.Data = OrderMappingData.ToOrderDto(order);
             rs.IsSuccess = true;
-
-
         }
         catch (Exception ex)
         {
@@ -46,6 +48,7 @@ public class OrderService : IOrderService
         }
         return rs;
     }
+
 
     public async Task<ResultService<OrderDto>> GetByTrackingId(Guid trackingId)
     {
