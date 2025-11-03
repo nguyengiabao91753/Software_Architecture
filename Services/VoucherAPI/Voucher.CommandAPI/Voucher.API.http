@@ -1,0 +1,6 @@
+@Voucher.API_HostAddress = http://localhost:5140
+
+GET {{Voucher.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
