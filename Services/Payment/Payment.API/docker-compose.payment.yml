@@ -1,0 +1,19 @@
+﻿version: '3.9'
+
+services:
+  payment.api:
+    container_name: payment_api
+    build:
+      context: ../..   # từ Services/Payment đến root
+      dockerfile: Services/Payment/Payment.API/Dockerfile
+    environment:
+      - ASPNETCORE_URLS=http://+:7005
+      - CONSUL_HOST=consul
+    ports:
+      - "7005:7005"
+    networks:
+      - global-network
+
+networks:
+  global-network:
+    external: true
