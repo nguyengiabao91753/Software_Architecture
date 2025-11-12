@@ -22,6 +22,26 @@ public class OrderService : IOrderService
         _eventPublisher = eventPublisher;
     }
 
+    public async Task<ResultService<List<OrderDto>>> GetAllOrders()
+    {
+        
+        var rs = new ResultService<List<OrderDto>>();
+        try
+        {
+            var orders = await _db.Orders
+                .Include(o => o.OrderItems)
+                .ToListAsync();
+            rs.Data = orders.Select(OrderMappingData.ToOrderDto).ToList();
+            rs.IsSuccess = true;
+        }
+        catch (Exception ex)
+        {
+            rs.IsSuccess = false;
+            rs.Message = ex.Message;
+        }
+        return rs;
+    }
+
     public async Task<ResultService<OrderDto>> GetById(Guid id)
     {
         var rs = new ResultService<OrderDto>();

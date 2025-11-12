@@ -17,10 +17,20 @@ public class OrderAPIController : ControllerBase
         _orderService = orderService;
     }
 
-    [HttpGet("get/{id}")]
-    public async Task<IActionResult> Get(string id)
+    [HttpGet]
+    public async Task<IActionResult> GetAll()
     {
-        var rs = await _orderService.GetById(Guid.Parse(id));
+        var rs = await _orderService.GetAllOrders();
+        if (!rs.IsSuccess)
+            return BadRequest(rs);
+        return Ok(rs);
+    }
+
+    [HttpGet("get/{id}")]
+    public async Task<IActionResult> Get(Guid id)
+    {
+
+        var rs = await _orderService.GetById(id);
         if (!rs.IsSuccess)
             return BadRequest(rs);
         return Ok(rs);
