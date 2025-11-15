@@ -118,3 +118,36 @@ Dữ liệu trong ReadDB sẽ tự động được cập nhật khi có event t
 Vào tab Queues tại http://localhost:15672
 
 Khi gửi POST /vouchers, RabbitMQ sẽ nhận 1 message và QueryAPI sẽ consume để ghi vào ReadDB.
+
+
+
+
+test trên RabbitMQ:
+key=value
+Content-Type=application/json
+MessageType=urn:message:Integrations.Messaging.Events:OrderPlacedEvent
+
+
+{
+  "messageType": [
+    "urn:message:Integrations.Messaging.Events:OrderPlacedEvent"
+  ],
+  "message": {
+    "OrderId": "00000000-0000-0000-0000-000000000001",
+    "CustomerId": "00000000-0000-0000-0000-000000000002",
+    "RestaurantId": "00000000-0000-0000-0000-000000000003",
+    "TrackingId": "00000000-0000-0000-0000-000000000004",
+    "VoucherId": "04F8CD39-91C7-4101-A1CA-B89A696334EB",
+    "TotalAmount": 100000,
+    "OrderStatus": "completed",
+    "FailureMessages": null,
+    "OrderItems": [
+      {
+        "ProductId": "00000000-0000-0000-0000-000000000010",
+        "Price": 100000,
+        "Quantity": 1,
+        "SubTotal": 100000
+      }
+    ]
+  }
+}
