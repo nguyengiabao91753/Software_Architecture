@@ -3,8 +3,10 @@ using Orders.Infrastructure;
 using Orders.Infrastructure.Extensions;
 using Orders.Messaging;
 using Integrations.Messaging.Masstransit;
+using Integrations.Consul.Extension;
 
 var builder = WebApplication.CreateBuilder(args);
+
 
 
 
@@ -37,6 +39,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
     await app.InitialiseDatabaseAsync();
 }
+
+app.RegisterWithConsul(builder.Configuration);
+
 
 app.UseHttpsRedirection();
 

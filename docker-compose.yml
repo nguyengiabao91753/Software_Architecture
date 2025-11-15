@@ -1,14 +1,64 @@
-version: '3.9'
-
+﻿
 services:
-   # consul:
-   #   image: consul
-   #   container_name: consul
-   #   ports:
-   #     - "8500:8500"
-   #   command: ["agent", "-dev", "-client=0.0.0.0"]
+  consul:
+    image: consul:1.15.4
+    container_name: consul
+    ports:
+      - "8500:8500"
+    command: ["agent", "-dev", "-client=0.0.0.0"]
+    networks:
+      - global-network
+  
+  rabbitmq:
+    image: rabbitmq:3.9-management
+    container_name: rabbitmq
+    hostname: rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    ports:
+      - "5672:5672"     
+      - "15672:15672"  
+    networks:
+      - global-network
 
-  db:
+    
+  health-check:
+    image: health-check
+    container_name: health_check
+    build:
+      context: .
+      dockerfile: ./Services/HealthCheck/HealthCheck.Application/Dockerfile
+    environment:
+      - ASPNETCORE_URLS=http://0.0.0.0:9000
+    ports:
+      - "9000:9000"
+    depends_on:
+        - consul
+        - rabbitmq
+    networks: 
+        - global-network
+  
+    
+
+  # Gateway-////////////////////////////////////
+  api-gateway:
+    container_name: api_gateway
+    build:
+      context: .
+      dockerfile: ./Gateways/Gateways.Ocelot/Dockerfile
+    ports:
+      - "7000:7000"
+    environment:
+      - ASPNETCORE_URLS=http://+:7000
+      - CONSUL_HOST=consul
+    depends_on:
+      - consul
+    networks:
+      - global-network
+  # Order Service-//////////////////////////////////
+
+  orders.db:
     image: mcr.microsoft.com/mssql/server:2019-latest
     container_name: orders_db
     environment:
@@ -17,33 +67,61 @@ services:
     ports:
       - "1433:1433"
     networks:
-      - orders-network
+      - order-network
 
   orders.api:
     container_name: orders_api
     build:
       context: .
-      dockerfile: Services/Orders/Orders.API/Dockerfile
+      dockerfile: ./Services/Orders/Orders.API/Dockerfile
+
+    image: orders-api
     environment:
-      - ConnectionStrings__Database=Server=db,1433;Database=OrderDb;User Id=sa;Password=Admin123*;TrustServerCertificate=True;
+      # ====== Kết nối database ======
+      - ConnectionStrings__Database=Server=orders.db,1433;Database=OrderDb;User Id=sa;Password=Admin123*;TrustServerCertificate=True;
       - ASPNETCORE_URLS=http://+:7003
+
+      # ====== Cấu hình Consul ======
+      - ConsulConfig__Address=http://consul:8500
+      - ConsulConfig__ServiceName=orders-api
+      - ConsulConfig__ServicePort=7003
+
     depends_on:
-      - db
+      - orders.db
+      - consul
+      - rabbitmq
     ports:
       - "7003:7003"
     networks:
-      - orders-network
+      - order-network
+      - global-network
 
+
+   # Payment Service-///////////////////////////////////
   payment.api:
     container_name: payment_api
-    image: ${DOCKER_REGISTRY-}paymentapi
     build:
-      context: .
-      dockerfile: Services/Payment/Payment.API/Dockerfile
+        context: .
+        dockerfile: ./Services/Payment/Payment.API/Dockerfile
+
+    image: payment-api
+    environment:
+        - ASPNETCORE_URLS=http://+:7005
+        - ConsulConfig__Address=http://consul:8500
+        - ConsulConfig__ServiceName=payment-api
+        - ConsulConfig__ServicePort=7005
+    depends_on:
+        - consul
+        - rabbitmq
     ports:
-      - "7005:7005"
+        - "7005:7005"
+    networks:
+        - global-network
+
+
 
 networks:
-  orders-network:
+  order-network:
     driver: bridge
-
+  global-network:
+    driver: bridge

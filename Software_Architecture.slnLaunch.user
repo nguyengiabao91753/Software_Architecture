@@ -11,6 +11,11 @@
         "Path": "Services\\Payment\\Payment.API\\Payment.API.csproj",
         "Action": "Start",
         "DebugTarget": "https"
+      },
+      {
+        "Path": "Services\\HealthCheck\\HealthCheck.Application\\HealthCheck.Application.csproj",
+        "Action": "Start",
+        "DebugTarget": "https"
       }
     ]
   }

@@ -30,7 +30,7 @@ builder.Services.AddMessageBroker(builder.Configuration, typeof(Program).Assembl
 
 //Add Health Check
 builder.Services.AddHealhCheckConfig(builder.Configuration)
-                .AddHeatlthCheckUIConfig();
+                .AddHeatlthCheckUIConfig(builder.Configuration);
 
 
 var app = builder.Build();

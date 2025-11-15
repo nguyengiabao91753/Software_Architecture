@@ -4,28 +4,27 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 USER $APP_UID
 WORKDIR /app
-EXPOSE 7005
+EXPOSE 9000
 
 
 # This stage is used to build the service project
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Services/Payment/Payment.API/Payment.API.csproj", "Services/Payment/Payment.API/"]
-COPY ["Services/Payment/Payment.Messaging/Payment.Messaging.csproj", "Services/Payment/Payment.Messaging/"]
-COPY ["Integrations/Integrations.Consul/Integrations.Consul.csproj", "Integrations/Integrations.Consul/"]
-RUN dotnet restore "./Services/Payment/Payment.API/Payment.API.csproj"
+COPY ["Services/HealthCheck/HealthCheck.Application/HealthCheck.Application.csproj", "Services/HealthCheck/HealthCheck.Application/"]
+COPY ["Integrations/Integrations.Messaging/Integrations.Messaging.csproj", "Integrations/Integrations.Messaging/"]
+RUN dotnet restore "./Services/HealthCheck/HealthCheck.Application/HealthCheck.Application.csproj"
 COPY . .
-WORKDIR "/src/Services/Payment/Payment.API"
-RUN dotnet build "./Payment.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR "/src/Services/HealthCheck/HealthCheck.Application"
+RUN dotnet build "./HealthCheck.Application.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # This stage is used to publish the service project to be copied to the final stage
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Payment.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./HealthCheck.Application.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 # This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Payment.API.dll"]
+ENTRYPOINT ["dotnet", "HealthCheck.Application.dll"]

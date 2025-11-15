@@ -14,7 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Integrations.Messaging\Integrations.Messaging.csproj" />
     <ProjectReference Include="..\Orders.Messaging\Orders.Messaging.csproj" />
   </ItemGroup>
 

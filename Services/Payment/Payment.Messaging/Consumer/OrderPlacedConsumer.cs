@@ -12,6 +12,7 @@ namespace Payment.Messaging.Consumer;
 public class OrderPlacedConsumer : IConsumer<OrderPlacedEvent>
 {
     private readonly HttpClient _httpClient;
+
     public OrderPlacedConsumer(IHttpClientFactory httpClientFactory)
     {
         _httpClient = httpClientFactory.CreateClient("OrdersApi");

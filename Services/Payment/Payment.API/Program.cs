@@ -1,6 +1,7 @@
 using Integrations.Messaging.Masstransit;
 using Payment.Messaging;
 using Payment.Messaging.Consumer;
+using Integrations.Consul.Extension;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,6 +41,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.RegisterWithConsul(builder.Configuration);
 
 app.UseHttpsRedirection();
 

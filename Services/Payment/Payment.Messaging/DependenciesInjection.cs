@@ -14,7 +14,7 @@ public static class DependenciesInjection
             x.AddConsumer<OrderPlacedConsumer, OrderPlacedConsumerDefinition>();
             x.UsingRabbitMq((context, configurator) =>
             {
-                configurator.Host("localhost", "/", host =>
+                configurator.Host(configuration["MessageBroker:HostAddress"], host =>
                 {
                     host.Username(configuration["MessageBroker:UserName"]);
                     host.Password(configuration["MessageBroker:Password"]);

@@ -7,15 +7,17 @@ WORKDIR /app
 EXPOSE 7003
 
 
-
 # This stage is used to build the service project
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Services/Orders/Orders.API/Orders.API.csproj", "Services/Orders/Orders.API/"]
-COPY ["Orders.Infrastructure/Orders.Infrastructure.csproj", "Orders.Infrastructure/"]
+COPY ["Integrations/Integrations.Consul/Integrations.Consul.csproj", "Integrations/Integrations.Consul/"]
+COPY ["Shares/Shares.SystemConfig/Shares.SystemConfig.csproj", "Shares/Shares.SystemConfig/"]
 COPY ["Services/Orders/Orders.Application/Orders.Application.csproj", "Services/Orders/Orders.Application/"]
 COPY ["Services/Orders/Orders.Domain/Orders.Domain.csproj", "Services/Orders/Orders.Domain/"]
+COPY ["Services/Orders/Orders.Messaging/Orders.Messaging.csproj", "Services/Orders/Orders.Messaging/"]
+COPY ["Services/Orders/Orders.Infrastructure/Orders.Infrastructure.csproj", "Services/Orders/Orders.Infrastructure/"]
 RUN dotnet restore "./Services/Orders/Orders.API/Orders.API.csproj"
 COPY . .
 WORKDIR "/src/Services/Orders/Orders.API"
