@@ -6,7 +6,7 @@ namespace Voucher.Application;
 
 public static class DependencyInjection
 {
-    // COMMAND API → chỉ load Command handlers
+    // COMMAND API load Command handlers
     public static IServiceCollection AddApplicationCommandServices(
         this IServiceCollection services,
         IConfiguration cfg)
@@ -21,7 +21,7 @@ public static class DependencyInjection
         return services;
     }
 
-    // QUERY API → chỉ load Query handlers
+    // QUERY API load Query handlers
     public static IServiceCollection AddApplicationQueryServices(
         this IServiceCollection services,
         IConfiguration cfg)

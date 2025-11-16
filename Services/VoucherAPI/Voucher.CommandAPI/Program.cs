@@ -3,7 +3,7 @@ using Voucher.Application;
 using Voucher.Infrastructure.Data.Extensions;
 using Voucher.CommandAPI;
 using MassTransit;
-using Voucher.Messaging.Consumers;
+using Voucher.Messaging.Consumers.CommandConsumers;  // ⭐ SỬA ĐÚNG NAMESPACE
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +15,7 @@ builder.Services
 // MASS TRANSIT
 builder.Services.AddMassTransit(x =>
 {
-    x.AddConsumer<OrderPlacedConsumer>();
+    x.AddConsumer<OrderPlacedConsumer>();   // ⭐ Consumer OK
 
     x.UsingRabbitMq((context, cfg) =>
     {

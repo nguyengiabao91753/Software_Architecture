@@ -1,15 +1,18 @@
 using MassTransit;
 using Voucher.Infrastructure.Data;
 using Voucher.Shared.Events;
+using Microsoft.Extensions.Logging;
 
-namespace Voucher.QueryAPI.Consumers;
+namespace Voucher.Messaging.Consumers.QueryConsumers;
 
 public class VoucherStatusUpdatedConsumer : IConsumer<VoucherStatusUpdatedEvent>
 {
     private readonly VoucherReadDbContext _context;
     private readonly ILogger<VoucherStatusUpdatedConsumer> _logger;
 
-    public VoucherStatusUpdatedConsumer(VoucherReadDbContext context, ILogger<VoucherStatusUpdatedConsumer> logger) // ✅
+    public VoucherStatusUpdatedConsumer(
+        VoucherReadDbContext context,
+        ILogger<VoucherStatusUpdatedConsumer> logger)
     {
         _context = context;
         _logger = logger;
@@ -18,6 +21,7 @@ public class VoucherStatusUpdatedConsumer : IConsumer<VoucherStatusUpdatedEvent>
     public async Task Consume(ConsumeContext<VoucherStatusUpdatedEvent> context)
     {
         var message = context.Message;
+
         var voucher = await _context.Vouchers.FindAsync(message.VoucherId);
 
         if (voucher == null)
