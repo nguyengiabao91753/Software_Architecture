@@ -9,11 +9,21 @@ namespace Voucher.Infrastructure.Data.Extensions;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration cfg)
+    public static IServiceCollection AddInfrastructureWriteServices(this IServiceCollection services, IConfiguration cfg)
     {
         // Write DB cho CommandAPI
         services.AddDbContext<WriteDbContext>(options =>
             options.UseSqlServer(cfg.GetConnectionString("CommandDb")));
+
+        // Repository
+        services.AddScoped<IVoucherRepository, VoucherRepository>();
+
+        return services;
+    }
+
+    public static IServiceCollection AddInfrastructureReadServices(this IServiceCollection services, IConfiguration cfg)
+    {
+        
 
         // Read DB cho QueryAPI
         services.AddDbContext<VoucherReadDbContext>(options =>

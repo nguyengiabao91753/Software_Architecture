@@ -8,6 +8,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.IdentityModel.JsonWebTokens;
 using System.Text;
+using Shares.SystemConfig.Authentication;
+using Integrations.Consul.Extension;
+using Ocelot.Provider.Consul;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,31 +24,10 @@ builder.Services.AddControllers();
 
 // Add Authentication with JWT
 // Add Authentication with JWT
-builder.Services.AddAuthentication(option => {
-    option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-    .AddJwtBearer("Bearer", options =>
-    {
-        options.RequireHttpsMetadata = false;
-        options.SaveToken = true;
-
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuerSigningKey = true,
-            ValidateIssuer = false,
-            ValidateAudience = false,
-            ValidateLifetime = false,
-            ValidIssuer = "AuthService",
-            ValidAudience = "Gateway",
-            IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.ASCII.GetBytes("mysupersecretkeyfortesting123456"))
-        };
-    });
-
+builder.AddAppAuthentication();
 
 // Add Ocelot
-builder.Services.AddOcelot().AddPolly();
+builder.Services.AddOcelot().AddPolly().AddConsul();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -56,6 +38,8 @@ builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.AddDebug();
 
+
+builder.Services.AddHealthChecks();
 
 var app = builder.Build();
 
@@ -80,5 +64,8 @@ app.MapControllers();
 // Important: use Ocelot after other middleware
 await app.UseOcelot();
 
+
+app.MapHealthChecks("/health");
+app.RegisterWithConsul(builder.Configuration);
 app.Run();
 

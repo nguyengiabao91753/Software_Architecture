@@ -20,22 +20,52 @@ builder.Services.AddHealthChecks()
         timeout: TimeSpan.FromSeconds(5),
         tags: new[] { "ready", "rabbit" }
     )
-    // Check Consul registered services
+    // Check Consul registered services with health
     .AddCheck("consul-services", () =>
     {
         try
         {
-            using var consul = new ConsulClient(c => c.Address = new Uri(builder.Configuration["ConsulConfig:Address"]));
-            var services = consul.Agent.Services().Result.Response;
-            return services.Any()
-                ? HealthCheckResult.Healthy($"{services.Count} services registered in Consul")
-                : HealthCheckResult.Degraded("No services registered in Consul");
+            using var consul = new ConsulClient(c =>
+                c.Address = new Uri(builder.Configuration["ConsulConfig:Address"])
+            );
+
+            // Lấy toàn bộ service name
+            var cat = consul.Catalog.Services().Result.Response;
+
+            var serviceHealthList = new List<object>();
+
+            foreach (var serviceName in cat.Keys)
+            {
+                // Get health for each service
+                var health = consul.Health.Service(serviceName, "", passingOnly: false).Result.Response;
+
+                // Lấy trạng thái unique theo Service ID
+                var grouped = health
+                    .GroupBy(h => h.Service.ID)
+                    .Select(g => new
+                    {
+                        ServiceId = g.Key,
+                        ServiceName = serviceName,
+                        Status = g.SelectMany(x => x.Checks)
+                                  .Select(c => c.Status.ToString())
+                                  .Distinct()
+                                  .ToList()
+                    });
+
+                serviceHealthList.AddRange(grouped);
+            }
+
+            return HealthCheckResult.Healthy("Consul services health", data: new Dictionary<string, object>
+            {
+                ["services"] = serviceHealthList
+            });
         }
         catch (Exception ex)
         {
             return HealthCheckResult.Unhealthy(ex.Message);
         }
     });
+
 
 builder.Services.AddHeatlthCheckUIConfig(builder.Configuration);
 

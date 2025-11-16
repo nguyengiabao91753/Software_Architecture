@@ -4,6 +4,9 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>18ab1d20-bb15-43b1-8d20-1a5607c61e21</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\..\..</DockerfileContext>
   </PropertyGroup>
 
   <ItemGroup>
@@ -32,10 +35,12 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
   </ItemGroup>
 
   <!-- ⭐⭐⭐ ADD PROJECT REFERENCES ⭐⭐⭐ -->
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Integrations\Integrations.Consul\Integrations.Consul.csproj" />
     <ProjectReference Include="..\Voucher.Application\Voucher.Application.csproj" />
     <ProjectReference Include="..\Voucher.Infrastructure\Voucher.Infrastructure.csproj" />
     <ProjectReference Include="..\Voucher.Shared\Voucher.Shared.csproj" />

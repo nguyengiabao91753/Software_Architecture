@@ -1,15 +1,16 @@
-using Carter;
+﻿using Carter;
 using Voucher.Application;
 using Voucher.Infrastructure.Data.Extensions;
 using Voucher.CommandAPI;
 using MassTransit;
 using Voucher.Messaging.Consumers;
+using Integrations.Consul.Extension;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
     .AddApplicationServices(builder.Configuration)
-    .AddInfrastructureServices(builder.Configuration)
+    .AddInfrastructureWriteServices(builder.Configuration)
     .AddCommandApiServices(builder.Configuration);
 
 // MASS TRANSIT
@@ -32,10 +33,16 @@ builder.Services.AddMassTransit(x =>
     });
 });
 
+builder.Services.AddHealthChecks();
 
 var app = builder.Build();
 
 app.UseCommandApiServices();
-await app.InitialiseDatabaseAsync();
+await app.InitialiseWriteDatabaseAsync();
+
+
+//Đăng ký consul
+app.MapHealthChecks("/health");
+app.RegisterWithConsul(builder.Configuration);
 
 app.Run();

@@ -6,18 +6,24 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>8f41d95d-7f4a-40ac-9d68-9f9c5daa0a17</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-    <DockerfileContext>.</DockerfileContext>
+    <DockerfileContext>..\..</DockerfileContext>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Consul" Version="1.7.14.9" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.8" />
-    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.0.2" />
+	  <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.20" />
+	  <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.0.2" />
     <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.0.2" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
     <PackageReference Include="MMLib.SwaggerForOcelot" Version="9.0.0" />
     <PackageReference Include="Ocelot" Version="24.0.1" />
+    <PackageReference Include="Ocelot.Provider.Consul" Version="24.0.0" />
     <PackageReference Include="Ocelot.Provider.Polly" Version="24.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Integrations\Integrations.Consul\Integrations.Consul.csproj" />
+    <ProjectReference Include="..\..\Shares\Shares.SystemConfig\Shares.SystemConfig.csproj" />
   </ItemGroup>
 
 </Project>

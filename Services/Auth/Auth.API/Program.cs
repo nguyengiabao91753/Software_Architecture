@@ -1,9 +1,12 @@
-using Auth.API.Data;
+﻿using Auth.API.Data;
+using Auth.API.Data.Extensions;
 using Auth.API.Models;
 using AuthAPI.Services;
 using AuthAPI.Services.IServices;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Integrations.Consul.Extension;
+
 using SecShare.Servicer.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -36,6 +39,9 @@ builder.Services.AddScoped<IAuthAPIService, AuthAPIService>();
 
 builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 
+builder.Services.AddHealthChecks();
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -43,6 +49,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    await app.InitialiseDatabaseAsync();
 }
 
 app.UseHttpsRedirection();
@@ -50,5 +57,9 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+//Đăng ký consul
+app.MapHealthChecks("/health");
+app.RegisterWithConsul(builder.Configuration);
 
 app.Run();

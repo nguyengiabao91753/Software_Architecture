@@ -7,16 +7,26 @@ namespace Voucher.Infrastructure.Data.Extensions;
 
 public static class Initialiser
 {
-    public static async Task InitialiseDatabaseAsync(this WebApplication app)
+    public static async Task InitialiseWriteDatabaseAsync(this WebApplication app)
     {
         using var scope = app.Services.CreateScope();
 
         var writeDb = scope.ServiceProvider.GetRequiredService<WriteDbContext>();
-        var readDb = scope.ServiceProvider.GetRequiredService<VoucherReadDbContext>();
 
         await writeDb.Database.MigrateAsync();
+
+        Console.WriteLine("✅ Databases migrated successfully (WriteDB).");
+    }
+
+
+    public static async Task InitialiseReadDatabaseAsync(this WebApplication app)
+    {
+        using var scope = app.Services.CreateScope();
+
+        var readDb = scope.ServiceProvider.GetRequiredService<VoucherReadDbContext>();
+
         await readDb.Database.MigrateAsync();
 
-        Console.WriteLine("✅ Databases migrated successfully (WriteDB + ReadDB).");
+        Console.WriteLine("✅ Databases migrated successfully (ReadDB).");
     }
 }

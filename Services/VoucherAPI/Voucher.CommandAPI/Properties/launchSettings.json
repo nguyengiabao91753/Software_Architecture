@@ -1,12 +1,12 @@
 {
   "profiles": {
-    "Voucher.QueryAPI": {
+    "Voucher.CommandAPI": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "https://localhost:65487;http://localhost:65488"
+      "applicationUrl": "https://localhost:55048;http://localhost:55049"
     },
     "Container (Dockerfile)": {
       "commandName": "Docker",

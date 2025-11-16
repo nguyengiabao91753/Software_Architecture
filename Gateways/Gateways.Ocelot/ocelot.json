@@ -2,10 +2,6 @@
   "Routes": [
     {
       "DownstreamPathTemplate": "/api/order/{everything}",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        { "Host": "localhost", "Port": 5077 }
-      ],
       "UpstreamPathTemplate": "/order/{everything}",
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
 
@@ -13,6 +9,11 @@
         "AuthenticationProviderKey": "Bearer",
         "AllowedScopes": []
       },
+      "ServiceName": "orders-api",
+      "LoadBalancerOptions": {
+        "Type": "RoundRobin"
+      },
+      "UseServiceDiscovery": true,
 
       "RateLimitOptions": {
         "ClientWhitelist": [ "dev-id", "admin-id" ],
