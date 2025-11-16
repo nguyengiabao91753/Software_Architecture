@@ -18,7 +18,7 @@ builder.Services.AddDbContext<VoucherReadDbContext>(options =>
 // Gọi các tầng dịch vụ
 builder.Services
     .AddApplicationServices(builder.Configuration)
-    .AddInfrastructureReadServices(builder.Configuration)
+    .AddInfrastructureServices(builder.Configuration)
     .AddQueryApiServices(builder.Configuration); // MassTransit, Carter, HealthCheck
 
 

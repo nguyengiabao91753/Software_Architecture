@@ -21,6 +21,7 @@ public static class DependencyInjection
 
         // Repository
         services.AddScoped<IVoucherRepository, VoucherRepository>();
+        services.AddScoped<IQueryRepository, QueryRepository>();
 
         return services;
     }

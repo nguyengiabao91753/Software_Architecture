@@ -12,6 +12,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Services/Auth/Auth.API/Auth.API.csproj", "Services/Auth/Auth.API/"]
+COPY ["Integrations/Integrations.Consul/Integrations.Consul.csproj", "Integrations/Integrations.Consul/"]
 RUN dotnet restore "./Services/Auth/Auth.API/Auth.API.csproj"
 COPY . .
 WORKDIR "/src/Services/Auth/Auth.API"

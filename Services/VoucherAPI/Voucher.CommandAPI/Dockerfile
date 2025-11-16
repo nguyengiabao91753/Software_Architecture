@@ -6,11 +6,13 @@ USER $APP_UID
 WORKDIR /app
 EXPOSE 7004
 
+
 # This stage is used to build the service project
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Services/VoucherAPI/Voucher.CommandAPI/Voucher.CommandAPI.csproj", "Services/VoucherAPI/Voucher.CommandAPI/"]
+COPY ["Integrations/Integrations.Consul/Integrations.Consul.csproj", "Integrations/Integrations.Consul/"]
 COPY ["Services/VoucherAPI/Voucher.Application/Voucher.Application.csproj", "Services/VoucherAPI/Voucher.Application/"]
 COPY ["Services/VoucherAPI/Voucher.Shared/Voucher.Shared.csproj", "Services/VoucherAPI/Voucher.Shared/"]
 COPY ["Services/VoucherAPI/Voucher.Infrastructure/Voucher.Infrastructure.csproj", "Services/VoucherAPI/Voucher.Infrastructure/"]

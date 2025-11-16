@@ -6,9 +6,9 @@ namespace Voucher.Application.Features.GetVouchers;
 
 public class GetVouchersHandler : IRequestHandler<GetVouchersQuery, IReadOnlyList<VoucherDto>>
 {
-    private readonly IVoucherRepository _repo;
+    private readonly IQueryRepository _repo;
 
-    public GetVouchersHandler(IVoucherRepository repo)
+    public GetVouchersHandler(IQueryRepository repo)
     {
         _repo = repo;
     }

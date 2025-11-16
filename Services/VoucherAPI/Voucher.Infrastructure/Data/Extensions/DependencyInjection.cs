@@ -30,7 +30,7 @@ public static class DependencyInjection
             options.UseSqlServer(cfg.GetConnectionString("QueryDb")));
 
         // Repository
-        services.AddScoped<IVoucherRepository, VoucherRepository>();
+        services.AddScoped<IQueryRepository, QueryRepository>();
 
         return services;
     }

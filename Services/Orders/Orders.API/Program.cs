@@ -9,10 +9,6 @@ using Shares.SystemConfig.Authentication;
 var builder = WebApplication.CreateBuilder(args);
 
 
-
-
-
-
 // Add services to the container.
 builder.Services.AddInfrastructureServices(builder.Configuration)
                 .AddOrderMessaging()

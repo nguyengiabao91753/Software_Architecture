@@ -51,6 +51,7 @@ services:
       - "7000:7000"
     environment:
       - ASPNETCORE_URLS=http://+:7000
+      - ASPNETCORE_ENVIRONMENT=Development
       - CONSUL_HOST=consul
     depends_on:
       - consul
@@ -123,6 +124,7 @@ services:
     environment:
         - ConnectionStrings__Database=Server=auth.db,1433;Database=AuthDb;User Id=sa;Password=Admin123*;TrustServerCertificate=True;
         - ASPNETCORE_URLS=http://+:7001
+        - ASPNETCORE_ENVIRONMENT=Development
         - ConsulConfig__Address=http://consul:8500
         - ConsulConfig__ServiceName=auth-api
         - ConsulConfig__ServicePort=7001
@@ -158,6 +160,7 @@ services:
     environment:
         - ConnectionStrings__Database=Server=voucher.write.db,1433;Database=OrderDb;User Id=sa;Password=Admin123*;TrustServerCertificate=True;
         - ASPNETCORE_URLS=http://+:7004
+        - ASPNETCORE_ENVIRONMENT=Development
         - ConsulConfig__Address=http://consul:8500
         - ConsulConfig__ServiceName=voucher-write-api
         - ConsulConfig__ServicePort=7004
@@ -191,6 +194,7 @@ services:
     environment:
         - ConnectionStrings__Database=Server=voucher.read.db,1433;Database=OrderDb;User Id=sa;Password=Admin123*;TrustServerCertificate=True;
         - ASPNETCORE_URLS=http://+:7006
+        - ASPNETCORE_ENVIRONMENT=Development
         - ConsulConfig__Address=http://consul:8500
         - ConsulConfig__ServiceName=voucher-read-api
         - ConsulConfig__ServicePort=7006

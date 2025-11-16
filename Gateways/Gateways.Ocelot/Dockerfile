@@ -12,6 +12,8 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Gateways/Gateways.Ocelot/Gateways.Ocelot.csproj", "Gateways/Gateways.Ocelot/"]
+COPY ["Integrations/Integrations.Consul/Integrations.Consul.csproj", "Integrations/Integrations.Consul/"]
+COPY ["Shares/Shares.SystemConfig/Shares.SystemConfig.csproj", "Shares/Shares.SystemConfig/"]
 RUN dotnet restore "./Gateways/Gateways.Ocelot/Gateways.Ocelot.csproj"
 COPY . .
 WORKDIR "/src/Gateways/Gateways.Ocelot"
