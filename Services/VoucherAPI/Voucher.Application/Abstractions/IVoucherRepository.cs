@@ -9,6 +9,5 @@ public interface IVoucherRepository
     Task<bool> IncreaseUsageAsync(Guid id, CancellationToken ct);
     Task<bool> UpdateStatusAsync(Guid id, string status, CancellationToken ct);
 
-    // Thêm dòng này để fix lỗi build
     Task<VoucherDto?> GetByIdAsync(Guid id, CancellationToken ct);
 }

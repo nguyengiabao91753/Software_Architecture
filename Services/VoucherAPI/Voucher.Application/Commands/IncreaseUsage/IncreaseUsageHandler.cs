@@ -3,7 +3,7 @@ using MassTransit;
 using Voucher.Application.Abstractions;
 using Voucher.Shared.Events;
 
-namespace Voucher.Application.Features.IncreaseUsage;
+namespace Voucher.Application.Commands.IncreaseUsage;
 
 public class IncreaseUsageHandler : IRequestHandler<IncreaseUsageCommand, bool>
 {

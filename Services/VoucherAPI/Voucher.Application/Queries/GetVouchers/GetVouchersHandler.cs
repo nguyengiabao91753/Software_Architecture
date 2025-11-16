@@ -2,7 +2,7 @@ using MediatR;
 using Voucher.Application.Abstractions;
 using Voucher.Application.Dtos;
 
-namespace Voucher.Application.Features.GetVouchers;
+namespace Voucher.Application.Queries.GetVouchers;
 
 public class GetVouchersHandler : IRequestHandler<GetVouchersQuery, IReadOnlyList<VoucherDto>>
 {

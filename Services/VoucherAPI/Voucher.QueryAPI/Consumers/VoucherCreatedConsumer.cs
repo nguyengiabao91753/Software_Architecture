@@ -8,9 +8,9 @@ namespace Voucher.QueryAPI.Consumers;
 
 public class VoucherCreatedConsumer : IConsumer<VoucherCreatedEvent>
 {
-    private readonly VoucherReadDbContext _db; // ✅ Đổi tên class
+    private readonly VoucherReadDbContext _db;
 
-    public VoucherCreatedConsumer(VoucherReadDbContext db) // ✅
+    public VoucherCreatedConsumer(VoucherReadDbContext db)
     {
         _db = db;
     }
@@ -19,8 +19,7 @@ public class VoucherCreatedConsumer : IConsumer<VoucherCreatedEvent>
     {
         var message = context.Message;
 
-        Console.WriteLine($"[Voucher.QueryAPI] Received VoucherCreatedEvent: " +
-                          $"{message.VoucherCode} - {message.Description}");
+        Console.WriteLine($"[QueryAPI] Received VoucherCreatedEvent: {message.VoucherCode}");
 
         var exists = await _db.Vouchers
             .AsNoTracking()
@@ -28,7 +27,7 @@ public class VoucherCreatedConsumer : IConsumer<VoucherCreatedEvent>
 
         if (exists)
         {
-            Console.WriteLine($"[Voucher.QueryAPI] Voucher {message.VoucherCode} đã tồn tại, bỏ qua.");
+            Console.WriteLine($"[QueryAPI] Voucher {message.VoucherCode} đã tồn tại => skip");
             return;
         }
 
@@ -42,13 +41,13 @@ public class VoucherCreatedConsumer : IConsumer<VoucherCreatedEvent>
             StartDate = message.StartDate,
             EndDate = message.EndDate,
             Quantity = message.Quantity,
-            UsedCount = 0,
-            Status = "active"
+            UsedCount = message.UsedCount,
+            Status = message.Status
         };
 
         _db.Vouchers.Add(voucher);
         await _db.SaveChangesAsync();
 
-        Console.WriteLine($"[Voucher.QueryAPI] Voucher {message.VoucherCode} đã được ghi vào ReadDB.");
+        Console.WriteLine($"[QueryAPI] INSERTED {message.VoucherCode} vào ReadDB thành công!");
     }
 }

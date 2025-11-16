@@ -1,8 +1,8 @@
 using Carter;
 using MediatR;
-using Voucher.Application.Features.GetVouchers;
+using Voucher.Application.Queries.GetVouchers;
 
-namespace Voucher.QueryAPI.Endpoints; // ✅ đổi namespace
+namespace Voucher.QueryAPI.Endpoints;
 
 public class GetVouchers : ICarterModule
 {

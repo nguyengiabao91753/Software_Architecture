@@ -8,7 +8,7 @@ using Voucher.Messaging.Consumers;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
-    .AddApplicationServices(builder.Configuration)
+    .AddApplicationCommandServices(builder.Configuration)
     .AddInfrastructureServices(builder.Configuration)
     .AddCommandApiServices(builder.Configuration);
 
@@ -32,10 +32,9 @@ builder.Services.AddMassTransit(x =>
     });
 });
 
-
 var app = builder.Build();
 
 app.UseCommandApiServices();
-await app.InitialiseDatabaseAsync();
+await app.InitialiseWriteDbAsync();
 
 app.Run();

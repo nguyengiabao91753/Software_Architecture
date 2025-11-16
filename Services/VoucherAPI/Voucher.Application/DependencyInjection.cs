@@ -1,20 +1,37 @@
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System.Reflection;
 
 namespace Voucher.Application;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration cfg)
+    // COMMAND API → chỉ load Command handlers
+    public static IServiceCollection AddApplicationCommandServices(
+        this IServiceCollection services,
+        IConfiguration cfg)
     {
-        // ✅ Cú pháp mới của MediatR (v12+)
-        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+        var commandAssembly = typeof(Commands.CreateVoucher.CreateVoucherCommand).Assembly;
 
-        // Nếu có FluentValidation hoặc Mapster, bạn có thể add thêm ở đây
-        // services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-        // TypeAdapterConfig.GlobalSettings.Scan(Assembly.GetExecutingAssembly());
+        services.AddMediatR(options =>
+        {
+            options.RegisterServicesFromAssemblies(commandAssembly);
+        });
+
+        return services;
+    }
+
+    // QUERY API → chỉ load Query handlers
+    public static IServiceCollection AddApplicationQueryServices(
+        this IServiceCollection services,
+        IConfiguration cfg)
+    {
+        var queryAssembly = typeof(Queries.GetVouchers.GetVouchersQuery).Assembly;
+
+        services.AddMediatR(options =>
+        {
+            options.RegisterServicesFromAssemblies(queryAssembly);
+        });
 
         return services;
     }

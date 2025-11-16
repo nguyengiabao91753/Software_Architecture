@@ -1,8 +1,8 @@
 using Carter;
 using MediatR;
-using Voucher.Application.Features.IncreaseUsage;
+using Voucher.Application.Commands.IncreaseUsage;
 
-namespace Voucher.CommandAPI.Endpoints; // ✅ đổi namespace
+namespace Voucher.CommandAPI.Endpoints;
 
 public class IncreaseUsage : ICarterModule
 {
