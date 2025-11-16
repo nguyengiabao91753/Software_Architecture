@@ -12,4 +12,6 @@ public interface IOrderService
     Task<ResultService<OrderDto>> GetById(Guid id);
 
     Task<ResultService<OrderDto>> GetByTrackingId(Guid trackingId);
+
+    Task<ResultService<List<OrderDto>>> GetAllOrders();
 }

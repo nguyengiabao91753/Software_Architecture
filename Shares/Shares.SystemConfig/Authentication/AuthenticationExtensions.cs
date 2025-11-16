@@ -20,7 +20,7 @@ public static class AuthenticationExtensions
         var issuer = settingsSection.GetValue<string>("Issuer");
         var audience = settingsSection.GetValue<string>("Audience");
 
-        var key = Encoding.ASCII.GetBytes(secret);
+        //var key = Encoding.ASCII.GetBytes(secret);
 
         builder.Services.AddAuthentication(x =>
         {
@@ -31,7 +31,7 @@ public static class AuthenticationExtensions
             x.TokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(key),
+                //IssuerSigningKey = new SymmetricSecurityKey(key),
                 ValidateIssuer = true,
                 ValidIssuer = issuer,
                 ValidAudience = audience,
