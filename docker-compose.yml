@@ -10,7 +10,7 @@ services:
       - global-network
   
   rabbitmq:
-    image: rabbitmq:3.9-management
+    image: rabbitmq:3.13-management
     container_name: rabbitmq
     hostname: rabbitmq
     environment:
