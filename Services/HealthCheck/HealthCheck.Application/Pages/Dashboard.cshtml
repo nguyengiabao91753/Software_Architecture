@@ -3,57 +3,199 @@
 @{
     ViewData["Title"] = "System Health Dashboard";
 }
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-<div class="container my-4">
-    <h1 class="mb-3">System Health Dashboard</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HealthCheck - System Monitoring Dashboard</title>
 
-    <div class="row mb-3" id="summary-cards">
-        <!-- Cards injected by JS -->
+    <!-- FIX: thiếu rel="stylesheet" -->
+    <link rel="stylesheet" href="~/healthCheck.css" />
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-left">
+                <div class="logo">HC</div>
+                <h1 class="nav-title">HealthCheck</h1>
+            </div>
+            <div class="nav-subtitle">System Monitoring Dashboard</div>
+        </div>
+    </nav>
+
+    <!-- Tab Navigation -->
+    <div class="tabs-container">
+        <div class="max-width-container">
+            <div class="tabs">
+                <button class="tab-button active" data-tab="dashboard">
+                    <div class="tab-indicator"></div>
+                    Overview
+                </button>
+
+                <button class="tab-button" data-tab="webhooks">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                    </svg>
+                    Notifications & Webhooks
+                </button>
+            </div>
+        </div>
     </div>
 
-    <div class="row mb-4">
-        <div class="col-lg-8">
-            <div class="card">
-                <div class="card-header">Services Status</div>
-                <div class="card-body">
-                    <canvas id="statusChart" height="120"></canvas>
+    <!-- Content -->
+    <main class="main-content">
+        <div class="max-width-container">
+
+            <!-- DASHBOARD TAB -->
+            <div id="dashboard" class="tab-content active">
+
+                <!-- Summary Metrics (FIX: bổ sung container đúng như JS yêu cầu) -->
+                <div id="summary-cards" class="metrics-grid"></div>
+
+                <!-- Quick Stats (FIX: bổ sung id cho JS cập nhật) -->
+                <ul id="quick-stats" class="list-group quick-stats"></ul>
+
+                <!-- Status Chart -->
+                <div class="row" style="margin-bottom: 20px; margin-top:10px;">
+                    <div class="chart-card col-lg-5" style="margin-bottom: 10px;">
+                        <h3 class="chart-title">Status Chart</h3>
+                        <canvas id="healthChart" height="220" width="1170"></canvas>
+                    </div>
+
+                    <div class="chart-card col-lg-7" style="padding-left: 20px;">
+                        <h3 class="chart-title">Services by Category</h3>
+                        <div class="bar-chart">
+                            <div class="bar-item">
+                                <div class="bar-label">API Services</div>
+                                <div class="bar-wrapper">
+                                    <div class="bar" style="width: 85.7%"></div>
+                                </div>
+                                <div class="bar-value">6</div>
+                            </div>
+                            <div class="bar-item">
+                                <div class="bar-label">Message Queue</div>
+                                <div class="bar-wrapper">
+                                    <div class="bar" style="width: 14.3%"></div>
+                                </div>
+                                <div class="bar-value">1</div>
+                            </div>
+                            <div class="bar-item">
+                                <div class="bar-label">Service Discovery</div>
+                                <div class="bar-wrapper">
+                                    <div class="bar" style="width: 14.3%"></div>
+                                </div>
+                                <div class="bar-value">1</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+
+               
+
+                <!-- Consul Services Table (FIX: JS cần đúng id này) -->
+                <div class="table-responsive services-table">
+                    <table class="table table-bordered" id="services-table">
+                        @* <thead> *@
+                        @*     <tr> *@
+                        @*         <th>Service</th> *@
+                        @*         <th>Node</th> *@
+                        @*         <th>Address</th> *@
+                        @*         <th>Port</th> *@
+                        @*         <th>Status</th> *@
+                        @*         <th>Output</th> *@
+                        @*     </tr> *@
+                        @* </thead> *@
+                        <tbody></tbody>
+                    </table>
+                </div>
+
+                <!-- Services Panel for custom services (JS: renderServices()) -->
+                <div class="services-card">
+                    <div class="services-header">
+                        <h3 class="services-title">Services & APIs</h3>
+                        <p class="services-description">Real-time health status of all microservices</p>
+                    </div>
+                    <div class="services-list" id="servicesList"></div>
                 </div>
             </div>
-        </div>
-        <div class="col-lg-4">
-            <div class="card">
-                <div class="card-header">Quick Stats</div>
-                <div class="card-body">
-                    <ul class="list-group" id="quick-stats">
-                        <!-- injected by JS -->
-                    </ul>
+
+            <!-- WEBHOOKS TAB -->
+            <div id="webhooks" class="tab-content">
+
+                <div class="webhooks-header">
+                    <div>
+                        <h2 class="webhooks-title">Email Notifications & Webhooks</h2>
+                        <p class="webhooks-description">Configure email notifications for service health changes</p>
+                    </div>
+
+                    <button class="btn-primary" id="addWebhookBtn">
+                        <svg class="icon" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        Add Notification
+                    </button>
                 </div>
+
+                <!-- Info -->
+                <div class="info-box">
+                    <svg class="info-icon" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                    <div>
+                        <p class="info-title">Email Notifications</p>
+                        <p>Receive immediate alerts when critical issues are detected.</p>
+                    </div>
+                </div>
+
+                <!-- Add Webhook Form -->
+                <div id="addWebhookForm" class="webhook-form hidden">
+                    <h3 class="form-title">Create Email Notification</h3>
+
+                    <div class="form-group">
+                        <label class="form-label">Notification Name</label>
+                        <input id="webhookName" class="form-input" type="text" placeholder="e.g. Critical Alerts">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Webhook URL</label>
+                        <input id="webhookUrl" class="form-input" type="url">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Email Recipients</label>
+                        <input id="webhookEmail" class="form-input" type="text">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Notification Triggers</label>
+                        <div id="triggersGrid" class="triggers-grid"></div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button class="btn-primary" id="createWebhookBtn">Create</button>
+                        <button class="btn-secondary" id="cancelWebhookBtn">Cancel</button>
+                    </div>
+                </div>
+
+                <!-- Webhooks list -->
+                <div class="webhooks-list" id="webhooksList"></div>
+
             </div>
         </div>
-    </div>
+    </main>
 
-    <div class="card">
-        <div class="card-header">All Registered Services (Consul)</div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-sm table-hover" id="services-table">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Service</th>
-                            <th>Service ID</th>
-                            <th>Address</th>
-                            <th>Port</th>
-                            <th>Status</th>
-                            <th>Output</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
+    <!-- FIX: NHÚNG SCRIPT -->
+    <!-- Chart.js nếu bạn dùng -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<script src="/js/dashboard.js"></script>
+    <!-- JS health check đã được bạn sửa → nhúng vào -->
+    <script src="~/js/dashboard.js"></script>
+
+</body>
+</html>
