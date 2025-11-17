@@ -72,6 +72,46 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Jaeger", "Jaeger", "{FF0BE6
 		docker-compose.jaeger.yml = docker-compose.jaeger.yml
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Collector", "Collector", "{B89FFF34-33BE-4C5B-8E91-855FFFB4C721}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.collector.yml = docker-compose.collector.yml
+		otel-collector-config.yaml = otel-collector-config.yaml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Prometheus", "Prometheus", "{50B493DA-3684-470C-A260-D54F484A64F5}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.prometheus.yml = docker-compose.prometheus.yml
+		prometheus.yml = prometheus.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Grafana", "Grafana", "{61F278E7-5155-4224-AD4C-263380605A48}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.grafana.yml = docker-compose.grafana.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Loki", "Loki", "{6BE53C0E-8B35-4230-9857-EC284EB4C040}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.loki.yml = docker-compose.loki.yml
+		loki-config.yaml = loki-config.yaml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Promtail", "Promtail", "{0DC61916-40A9-4DB7-81FD-2C9D33953F3E}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.promtail.yml = docker-compose.promtail.yml
+		promtail-config.yaml = promtail-config.yaml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Provisioning", "Provisioning", "{4D336A2A-FC29-4026-8BA2-E6A0BCE4D75C}"
+	ProjectSection(SolutionItems) = preProject
+		dashboards.yaml = dashboards.yaml
+		datasources.yaml = datasources.yaml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dashboards", "Dashboards", "{6726E5DA-08D1-43F4-9B64-44C2591A4C49}"
+	ProjectSection(SolutionItems) = preProject
+		service_overview.json = service_overview.json
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -378,6 +418,13 @@ Global
 		{C2E252A4-BEB0-C90C-C1B4-C8F8401D57FD} = {B5708719-DF05-483E-8404-14AF46F2D187}
 		{E7F08919-067B-451B-8B55-392507AC4C0A} = {C291DF7D-85FC-1711-9EF4-8D79098A3FAA}
 		{FF0BE6B1-8F34-4624-B733-BCCD791C0ECD} = {992A7326-2A6F-4969-97D3-B3F88E6A8FE6}
+		{B89FFF34-33BE-4C5B-8E91-855FFFB4C721} = {992A7326-2A6F-4969-97D3-B3F88E6A8FE6}
+		{50B493DA-3684-470C-A260-D54F484A64F5} = {992A7326-2A6F-4969-97D3-B3F88E6A8FE6}
+		{61F278E7-5155-4224-AD4C-263380605A48} = {992A7326-2A6F-4969-97D3-B3F88E6A8FE6}
+		{6BE53C0E-8B35-4230-9857-EC284EB4C040} = {992A7326-2A6F-4969-97D3-B3F88E6A8FE6}
+		{0DC61916-40A9-4DB7-81FD-2C9D33953F3E} = {992A7326-2A6F-4969-97D3-B3F88E6A8FE6}
+		{4D336A2A-FC29-4026-8BA2-E6A0BCE4D75C} = {61F278E7-5155-4224-AD4C-263380605A48}
+		{6726E5DA-08D1-43F4-9B64-44C2591A4C49} = {61F278E7-5155-4224-AD4C-263380605A48}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {370273B8-38D7-4273-8121-CB3D639B8F66}
