@@ -1,9 +1,9 @@
 using Carter;
 using MediatR;
 using Voucher.Application.Dtos;
-using Voucher.Application.Features.CreateVoucher;
+using Voucher.Application.Commands.CreateVoucher;
 
-namespace Voucher.CommandAPI.Endpoints; // ✅ Đổi namespace cho đúng
+namespace Voucher.CommandAPI.Endpoints;
 
 public class CreateVoucher : ICarterModule
 {

@@ -177,7 +177,7 @@ services:
         - ASPNETCORE_URLS=http://+:7004
         - ASPNETCORE_ENVIRONMENT=Development
         - ConsulConfig__Address=http://consul:8500
-        - ConsulConfig__ServiceName=voucher-write-api
+        - ConsulConfig__ServiceName=voucher-command-api
         - ConsulConfig__ServicePort=7004
     depends_on:
         - voucher.write.db
@@ -211,7 +211,7 @@ services:
         - ASPNETCORE_URLS=http://+:7006
         - ASPNETCORE_ENVIRONMENT=Development
         - ConsulConfig__Address=http://consul:8500
-        - ConsulConfig__ServiceName=voucher-read-api
+        - ConsulConfig__ServiceName=voucher-query-api
         - ConsulConfig__ServicePort=7006
     depends_on:
         - voucher.read.db

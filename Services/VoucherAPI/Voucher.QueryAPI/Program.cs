@@ -1,39 +1,40 @@
 using Microsoft.EntityFrameworkCore;
 using Voucher.QueryAPI;
 using Voucher.Application;
-using Voucher.Infrastructure;
 using Voucher.Infrastructure.Data;
 using Voucher.Infrastructure.Data.Extensions;
+using Voucher.Messaging.Query;
 using Integrations.Consul.Extension;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Chạy QueryAPI ở port 5003
 builder.WebHost.UseUrls("http://localhost:5003");
 
-// Đăng ký DbContext kết nối tới ReadDB
-builder.Services.AddDbContext<VoucherReadDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("QueryDb")));
+// =========================
+//   Fallback connection string
+// =========================
+var connectionString =
+    builder.Configuration.GetConnectionString("Database")
+    ?? builder.Configuration["ConnectionStrings:DefaultConnection"];
 
-// Gọi các tầng dịch vụ
-builder.Services
-    .AddApplicationServices(builder.Configuration)
-    .AddInfrastructureServices(builder.Configuration)
-    .AddQueryApiServices(builder.Configuration); // MassTransit, Carter, HealthCheck
+// Inject fallback back into configuration
+builder.Configuration["ConnectionStrings:Database"] = connectionString;
 
+// =========================
+//   Read DB
+// =========================
+builder.Services.AddInfrastructureRead(builder.Configuration);   // không đổi
 
+builder.Services.AddVoucherQueryMessaging(builder.Configuration);
+builder.Services.AddApplicationQueryServices(builder.Configuration);
+builder.Services.AddQueryApiServices(builder.Configuration);
 builder.Services.AddHealthChecks();
 
 var app = builder.Build();
 
-// Kích hoạt middleware & route
 app.UseQueryApiServices();
+await app.InitialiseReadDbAsync();
 
-
-await app.InitialiseReadDatabaseAsync();
-
-
-//Đăng ký consul
 app.MapHealthChecks("/health");
 app.RegisterWithConsul(builder.Configuration);
 

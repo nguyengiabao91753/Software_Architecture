@@ -1,8 +1,8 @@
 using Carter;
 using MediatR;
-using Voucher.Application.Features.UpdateStatus;
+using Voucher.Application.Commands.UpdateStatus;
 
-namespace Voucher.CommandAPI.Endpoints; // ✅ đổi namespace
+namespace Voucher.CommandAPI.Endpoints;
 
 public class UpdateStatus : ICarterModule
 {
@@ -21,5 +21,4 @@ public class UpdateStatus : ICarterModule
     }
 }
 
-// ✅ Có thể di chuyển record này sang Voucher.Shared để tái sử dụng
 public record UpdateStatusRequest(string Status);

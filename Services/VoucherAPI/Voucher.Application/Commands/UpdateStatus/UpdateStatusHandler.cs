@@ -3,7 +3,7 @@ using MassTransit;
 using Voucher.Application.Abstractions;
 using Voucher.Shared.Events;
 
-namespace Voucher.Application.Features.UpdateStatus;
+namespace Voucher.Application.Commands.UpdateStatus;
 
 public class UpdateStatusHandler : IRequestHandler<UpdateStatusCommand, bool>
 {

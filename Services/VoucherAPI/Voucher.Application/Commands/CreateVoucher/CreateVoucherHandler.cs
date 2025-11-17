@@ -3,12 +3,12 @@ using MediatR;
 using Voucher.Application.Abstractions;
 using Voucher.Shared.Events;
 
-namespace Voucher.Application.Features.CreateVoucher;
+namespace Voucher.Application.Commands.CreateVoucher;
 
 public class CreateVoucherHandler : IRequestHandler<CreateVoucherCommand, Guid>
 {
     private readonly IVoucherRepository _repo;
-    private readonly IPublishEndpoint _publishEndpoint; // ✅ để publish event
+    private readonly IPublishEndpoint _publishEndpoint; // để publish event
 
     public CreateVoucherHandler(IVoucherRepository repo, IPublishEndpoint publishEndpoint)
     {
@@ -31,7 +31,8 @@ public class CreateVoucherHandler : IRequestHandler<CreateVoucherCommand, Guid>
             request.Voucher.StartDate,
             request.Voucher.EndDate,
             request.Voucher.Quantity,
-            DateTime.UtcNow
+            request.Voucher.UsedCount,   
+            request.Voucher.Status       
         );
 
         // Publish lên RabbitMQ

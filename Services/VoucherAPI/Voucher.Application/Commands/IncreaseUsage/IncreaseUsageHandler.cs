@@ -3,7 +3,7 @@ using MassTransit;
 using Voucher.Application.Abstractions;
 using Voucher.Shared.Events;
 
-namespace Voucher.Application.Features.IncreaseUsage;
+namespace Voucher.Application.Commands.IncreaseUsage;
 
 public class IncreaseUsageHandler : IRequestHandler<IncreaseUsageCommand, bool>
 {
@@ -18,24 +18,23 @@ public class IncreaseUsageHandler : IRequestHandler<IncreaseUsageCommand, bool>
 
     public async Task<bool> Handle(IncreaseUsageCommand request, CancellationToken cancellationToken)
     {
-        // Gọi repo để tăng lượt sử dụng trong WriteDB
+        // Update WriteDB
         var success = await _repo.IncreaseUsageAsync(request.VoucherId, cancellationToken);
         if (!success)
             return false;
 
-        // Lấy voucher mới nhất để biết UsedCount hiện tại
         var voucher = await _repo.GetByIdAsync(request.VoucherId, cancellationToken);
         if (voucher == null)
             return false;
 
-        // Publish event sang RabbitMQ (để QueryAPI cập nhật ReadDB)
         await _publishEndpoint.Publish(new VoucherUsageIncreasedEvent(
             voucher.VoucherId,
+            voucher.Quantity,
             voucher.UsedCount,
             DateTime.UtcNow
         ), cancellationToken);
 
-        Console.WriteLine($" Published VoucherUsageIncreasedEvent for {voucher.VoucherCode}");
+        Console.WriteLine($"Published VoucherUsageIncreasedEvent for {voucher.VoucherCode}");
 
         return true;
     }

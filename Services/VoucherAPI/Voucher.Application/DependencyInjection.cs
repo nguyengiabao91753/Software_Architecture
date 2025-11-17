@@ -7,15 +7,53 @@ namespace Voucher.Application;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration cfg)
+    // ONLY COMMAND HANDLERS
+    public static IServiceCollection AddApplicationCommandServices(
+        this IServiceCollection services,
+        IConfiguration cfg)
     {
-        // ✅ Cú pháp mới của MediatR (v12+)
-        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+        services.AddMediatR(opt =>
+        {
+            opt.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
+        });
 
-        // Nếu có FluentValidation hoặc Mapster, bạn có thể add thêm ở đây
-        // services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-        // TypeAdapterConfig.GlobalSettings.Scan(Assembly.GetExecutingAssembly());
+        // Remove query handlers
+        FilterHandlers(services, "Voucher.Application.Commands");
 
         return services;
+    }
+
+    // ONLY QUERY HANDLERS
+    public static IServiceCollection AddApplicationQueryServices(
+        this IServiceCollection services,
+        IConfiguration cfg)
+    {
+        services.AddMediatR(opt =>
+        {
+            opt.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
+        });
+
+        // Remove command handlers
+        FilterHandlers(services, "Voucher.Application.Queries");
+
+        return services;
+    }
+
+    // Remove all handlers that are not in correct namespace
+    private static void FilterHandlers(IServiceCollection services, string correctNamespace)
+    {
+        var handlers = services
+            .Where(s =>
+                s.ServiceType.IsGenericType &&
+                (
+                    s.ServiceType.GetGenericTypeDefinition() == typeof(IRequestHandler<,>) ||
+                    s.ServiceType.GetGenericTypeDefinition() == typeof(IRequestHandler<>)
+                ))
+            .Where(s =>
+                s.ImplementationType?.Namespace?.StartsWith(correctNamespace) == false)
+            .ToList();
+
+        foreach (var h in handlers)
+            services.Remove(h);
     }
 }

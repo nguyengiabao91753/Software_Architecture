@@ -39,14 +39,13 @@
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
   </ItemGroup>
 
-  <!-- ⭐⭐⭐ ADD PROJECT REFERENCES ⭐⭐⭐ -->
   <ItemGroup>
     <ProjectReference Include="..\..\..\Integrations\Integrations.Consul\Integrations.Consul.csproj" />
     <ProjectReference Include="..\Voucher.Application\Voucher.Application.csproj" />
     <ProjectReference Include="..\Voucher.Infrastructure\Voucher.Infrastructure.csproj" />
     <ProjectReference Include="..\Voucher.Shared\Voucher.Shared.csproj" />
 
-    <!-- 🔥 ADD THIS ONE BELOW -->
+    <!-- ADD THIS ONE BELOW -->
     <ProjectReference Include="..\Voucher.Messaging\Voucher.Messaging.csproj" />
   </ItemGroup>
 
