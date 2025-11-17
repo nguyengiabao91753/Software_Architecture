@@ -8,17 +8,16 @@ using Microsoft.EntityFrameworkCore;
 using Integrations.Consul.Extension;
 
 using SecShare.Servicer.Auth;
+using Consul;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection").ToString();
+var connectionString = builder.Configuration.GetConnectionString("Database") ?? builder.Configuration["ConnectionStrings:DefaultConnection"];
 
 builder.Services.AddDbContext<IdentityApplicationDbContext>(options =>
-   options.UseSqlServer(
-        builder.Configuration.GetConnectionString("DefaultConnection")
-       
-    ));
+   options.UseSqlServer(connectionString)
+   );
 
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("ApiSettings:JwtOptions"));
 

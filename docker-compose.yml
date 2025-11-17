@@ -43,18 +43,25 @@ services:
 
   # Gateway-////////////////////////////////////
   api-gateway:
-    container_name: api_gateway
+    container_name: api-gateway
     build:
       context: .
       dockerfile: ./Gateways/Gateways.Ocelot/Dockerfile
+    image: api-gateway
     ports:
       - "7000:7000"
     environment:
       - ASPNETCORE_URLS=http://+:7000
       - ASPNETCORE_ENVIRONMENT=Development
       - CONSUL_HOST=consul
+      
     depends_on:
       - consul
+      - orders-api
+      - auth.api
+      - payment.api
+      - voucher.command.api
+      - voucher.query.api
     networks:
       - global-network
  
@@ -65,16 +72,17 @@ services:
   orders.db:
     image: mcr.microsoft.com/mssql/server:2019-latest
     container_name: orders_db
+    hostname: orders-api
     environment:
       - ACCEPT_EULA=Y
       - SA_PASSWORD=Admin123*
     ports:
       - "1433:1433"
     networks:
-      - order-network
+      - global-network
 
-  orders.api:
-    container_name: orders_api
+  orders-api:
+    container_name: orders-api
     build:
       context: .
       dockerfile: ./Services/Orders/Orders.API/Dockerfile
@@ -87,6 +95,7 @@ services:
 
       # ====== Cấu hình Consul ======
       - ConsulConfig__Address=http://consul:8500
+      - ServiceConfig__serviceAddress=http://orders-api:7003
       - ConsulConfig__ServiceName=orders-api
       - ConsulConfig__ServicePort=7003
 
@@ -97,7 +106,6 @@ services:
     ports:
       - "7003:7003"
     networks:
-      - order-network
       - global-network
 
 
@@ -111,12 +119,17 @@ services:
     - SA_PASSWORD=Admin123*
     ports:
     - "1436:1433"
+    healthcheck:
+        test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "Admin123*" -Q "SELECT 1"
+        interval: 10s
+        timeout: 5s
+        retries: 10
     networks:
-    - global-network
+        - global-network
 
 
   auth.api:
-    container_name: auth_api
+    container_name: auth-api
     build:
         context: .
         dockerfile: ./Services/Auth/Auth.API/Dockerfile
@@ -129,8 +142,10 @@ services:
         - ConsulConfig__ServiceName=auth-api
         - ConsulConfig__ServicePort=7001
     depends_on:
-        - auth.db
-        - consul
+        auth.db:
+            condition: service_healthy
+        consul:
+            condition: service_healthy
     ports:
         - "7001:7001"
     networks:
@@ -152,7 +167,7 @@ services:
 
 
   voucher.command.api:
-    container_name: voucher_command_api
+    container_name: voucher-command-api
     build:
         context: .
         dockerfile: ./Services/VoucherAPI/Voucher.CommandAPI/Dockerfile
@@ -186,7 +201,7 @@ services:
       - global-network
   
   voucher.query.api:
-    container_name: voucher_query_api
+    container_name: voucher-query-api
     build:
         context: .
         dockerfile: ./Services/VoucherAPI/Voucher.QueryAPI/Dockerfile
@@ -210,7 +225,7 @@ services:
 
    # Payment Service-///////////////////////////////////
   payment.api:
-    container_name: payment_api
+    container_name: payment-api
     build:
         context: .
         dockerfile: ./Services/Payment/Payment.API/Dockerfile
@@ -232,6 +247,10 @@ services:
 
 
 networks:
+  auth-network:
+    driver: bridge
+  voucher-network:
+    driver: bridge
   order-network:
     driver: bridge
   global-network:

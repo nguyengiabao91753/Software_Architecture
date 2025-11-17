@@ -1,19 +1,27 @@
 {
   "Routes": [
+
     {
       "DownstreamPathTemplate": "/api/order/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "orders-api",
+          "Port": 7003
+        }
+      ],
       "UpstreamPathTemplate": "/order/{everything}",
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
 
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "Bearer",
-        "AllowedScopes": []
-      },
-      "ServiceName": "orders-api",
-      "LoadBalancerOptions": {
-        "Type": "RoundRobin"
-      },
-      "UseServiceDiscovery": true,
+      //"AuthenticationOptions": {
+      //  "AuthenticationProviderKey": "Bearer",
+      //  "AllowedScopes": []
+      //},
+      //"ServiceName": "orders-api",
+      //"LoadBalancerOptions": {
+      //  "Type": "RoundRobin"
+      //},
+      //"UseServiceDiscovery": true,
 
       "RateLimitOptions": {
         "ClientWhitelist": [ "dev-id", "admin-id" ],
@@ -21,34 +29,52 @@
         "Period": "5s",
         "PeriodTimespan": 15,
         "Limit": 2
-      },
+      }
 
-      "QoSOptions": {
-        "ExceptionsAllowedBeforeBreaking": 3,
-        "DurationOfBreak": 10000,
-        "TimeoutValue": 5000
-      },
+      //"QoSOptions": {
+      //  "ExceptionsAllowedBeforeBreaking": 3,
+      //  "DurationOfBreak": 10000,
+      //  "TimeoutValue": 5000
+      //},
 
-      "SwaggerKey": "order"
-    }
-  ],
-  "SwaggerEndPoints": [
+
+    },
     {
-      "Key": "order",
-      "Config": [
+      "DownstreamPathTemplate": "/api/auth/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
         {
-          "Name": "Orders API",
-          "Version": "v1",
-          "Url": "http://localhost:5077/swagger/v1/swagger.json"
+          "Host": "auth-api",
+          "Port": 7001
         }
-      ]
+      ],
+      "UpstreamPathTemplate": "/auth/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
+
+      //"AuthenticationOptions": {
+      //  "AuthenticationProviderKey": "Bearer",
+      //  "AllowedScopes": []
+      //},
+      //"ServiceName": "auth-api",
+      //"LoadBalancerOptions": {
+      //  "Type": "RoundRobin"
+      //},
+      //"UseServiceDiscovery": true
     }
+
   ],
+
   "GlobalConfiguration": {
-    "BaseUrl": "http://localhost:5017",
+    "BaseUrl": "https://localhost:7000",
+    //"ServiceDiscoveryProvider": {
+    //  "Scheme": "http",
+    //  "Host": "consul",
+    //  "Port": 8500,
+    //  "Type": "Consul"
+    //},
     "RateLimitOptions": {
       "DisableRateLimitHeaders": false,
-      "QuotaExceededMessage": "Cút",
+      "QuotaExceededMessage": "Qúa lượt request",
       "HttpStatusCode": 429
     }
   }

@@ -24,48 +24,52 @@ builder.Services.AddControllers();
 
 // Add Authentication with JWT
 // Add Authentication with JWT
-builder.AddAppAuthentication();
+//builder.AddAppAuthentication();
+
+
+builder.Services.AddCors(options => options.AddDefaultPolicy(p => p.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
 
 // Add Ocelot
-builder.Services.AddOcelot().AddPolly().AddConsul();
+builder.Services.AddOcelot()
+                //.AddPolly()
+                //.AddConsul()
+                ;
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerForOcelot(builder.Configuration);
-builder.Services.AddSwaggerGen();
+//builder.Services.AddEndpointsApiExplorer();
+//builder.Services.AddSwaggerForOcelot(builder.Configuration);
+//builder.Services.AddSwaggerGen();
 
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.AddDebug();
 
 
-builder.Services.AddHealthChecks();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerForOcelotUI(opt =>
-    {
-        opt.PathToSwaggerGenerator = "/swagger/docs";
-    });
+    //app.UseSwagger();
+    //app.UseSwaggerForOcelotUI(opt =>
+    //{
+    //    opt.PathToSwaggerGenerator = "/swagger/docs";
+    //});
 }
+app.UseCors();
+//app.UseHttpsRedirection();
+//app.UseRouting();
+//app.UseAuthentication();
+//app.UseAuthorization();
 
-app.UseHttpsRedirection();
-app.UseRouting();
-app.UseAuthentication();
-app.UseAuthorization();
-
-app.MapControllers();
+//app.MapControllers();
 
 
 // Important: use Ocelot after other middleware
-await app.UseOcelot();
+app.UseOcelot().Wait();
 
 
-app.MapHealthChecks("/health");
-app.RegisterWithConsul(builder.Configuration);
+
 app.Run();
 

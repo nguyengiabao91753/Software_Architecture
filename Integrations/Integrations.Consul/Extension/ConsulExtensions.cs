@@ -13,6 +13,16 @@ using Microsoft.Extensions.Hosting;
 namespace Integrations.Consul.Extension;
 public static class ConsulExtensions
 {
+    public static IServiceCollection AddConsulConfig(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddSingleton<IConsulClient, ConsulClient>(p => new ConsulClient(consulConfig =>
+        {
+            var consulHost = configuration["ConsulConfig:ConsulHost"];
+            consulConfig.Address = new Uri($"http://{consulHost}:{configuration["ConsulConfig:Address"]}");
+        }));
+
+        return services;
+    }
     public static IApplicationBuilder RegisterWithConsul(this IApplicationBuilder app, IConfiguration configuration)
     {
         var lifetime = app.ApplicationServices.GetRequiredService<IHostApplicationLifetime>();
@@ -20,9 +30,11 @@ public static class ConsulExtensions
         var consulConfig = configuration.GetSection("ConsulConfig");
         var consulAddress = consulConfig["Address"];
         var serviceName = consulConfig["ServiceName"];
+
         var servicePort = int.Parse(consulConfig["ServicePort"] ?? "80");
         var healthCheck = consulConfig["HealthCheck"] ?? "/health";
 
+        //var consulClient = app.ApplicationServices.GetRequiredService<IConsulClient>();
         var consulClient = new ConsulClient(config =>
         {
             config.Address = new Uri(consulAddress);
@@ -34,7 +46,7 @@ public static class ConsulExtensions
         {
             ID = $"{serviceName}-{Guid.NewGuid()}",
             Name = serviceName,
-            Address = serviceName, // dùng service name trong docker-compose.yml
+            Address = serviceName, // dùng service name trong docker-compose.yml. Nếu null -> lỗi 404
             Port = servicePort,
             Check = new AgentServiceCheck
             {

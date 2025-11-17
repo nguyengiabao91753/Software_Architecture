@@ -29,6 +29,7 @@ builder.Services.AddSwaggerGen();
 builder.AddAppAuthentication();
 builder.AddSwaggerWithJWT();
 
+
 builder.Services.AddHealthChecks();
 
 var app = builder.Build();
