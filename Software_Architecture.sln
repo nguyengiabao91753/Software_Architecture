@@ -65,6 +65,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Integrations.Messaging", "I
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Voucher.Messaging", "Services\VoucherAPI\Voucher.Messaging\Voucher.Messaging.csproj", "{E7F08919-067B-451B-8B55-392507AC4C0A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Observability", "Observability", "{992A7326-2A6F-4969-97D3-B3F88E6A8FE6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Jaeger", "Jaeger", "{FF0BE6B1-8F34-4624-B733-BCCD791C0ECD}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.jaeger.yml = docker-compose.jaeger.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -370,6 +377,7 @@ Global
 		{3858FC7C-7802-4B48-94F6-CB9204AD5B28} = {7EA19EBC-421A-44CD-8104-96604C465FB7}
 		{C2E252A4-BEB0-C90C-C1B4-C8F8401D57FD} = {B5708719-DF05-483E-8404-14AF46F2D187}
 		{E7F08919-067B-451B-8B55-392507AC4C0A} = {C291DF7D-85FC-1711-9EF4-8D79098A3FAA}
+		{FF0BE6B1-8F34-4624-B733-BCCD791C0ECD} = {992A7326-2A6F-4969-97D3-B3F88E6A8FE6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {370273B8-38D7-4273-8121-CB3D639B8F66}
