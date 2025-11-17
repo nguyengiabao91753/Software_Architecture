@@ -8,7 +8,7 @@ using Integrations.Consul.Extension;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.WebHost.UseUrls("http://localhost:5003");
+//builder.WebHost.UseUrls("http://localhost:5003");
 
 // =========================
 //   Fallback connection string
@@ -28,6 +28,8 @@ builder.Services.AddInfrastructureRead(builder.Configuration);   // không đổ
 builder.Services.AddVoucherQueryMessaging(builder.Configuration);
 builder.Services.AddApplicationQueryServices(builder.Configuration);
 builder.Services.AddQueryApiServices(builder.Configuration);
+
+
 builder.Services.AddHealthChecks();
 
 var app = builder.Build();
