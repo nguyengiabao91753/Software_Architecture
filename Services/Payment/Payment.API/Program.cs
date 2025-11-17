@@ -33,6 +33,8 @@ builder.Services.AddPaymentMessaging(builder.Configuration);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddHealthChecks();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -42,12 +44,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.RegisterWithConsul(builder.Configuration);
 
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHealthChecks("/health");
+app.RegisterWithConsul(builder.Configuration);
 
 app.Run();

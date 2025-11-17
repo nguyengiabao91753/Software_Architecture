@@ -4,17 +4,29 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+
+    <!-- Tắt chế độ include file tự động -->
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- MassTransit -->
     <PackageReference Include="MassTransit" Version="8.5.5" />
     <PackageReference Include="MassTransit.RabbitMQ" Version="8.5.5" />
 
+    <!-- EF Core -->
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.6" />
 
+    <!-- Event Contracts -->
     <ProjectReference Include="..\..\..\Integrations\Integrations.Messaging\Integrations.Messaging.csproj" />
 
+    <!-- DB Contexts -->
     <ProjectReference Include="..\Voucher.Infrastructure\Voucher.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <!-- Tự động include tất cả .cs -->
+  <ItemGroup>
+    <Compile Include="**\*.cs" />
   </ItemGroup>
 
 </Project>

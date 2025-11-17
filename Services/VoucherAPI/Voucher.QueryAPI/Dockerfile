@@ -4,28 +4,30 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 USER $APP_UID
 WORKDIR /app
-EXPOSE 7000
+EXPOSE 7006
 
 
 # This stage is used to build the service project
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Gateways/Gateways.Ocelot/Gateways.Ocelot.csproj", "Gateways/Gateways.Ocelot/"]
+COPY ["Services/VoucherAPI/Voucher.QueryAPI/Voucher.QueryAPI.csproj", "Services/VoucherAPI/Voucher.QueryAPI/"]
 COPY ["Integrations/Integrations.Consul/Integrations.Consul.csproj", "Integrations/Integrations.Consul/"]
-COPY ["Shares/Shares.SystemConfig/Shares.SystemConfig.csproj", "Shares/Shares.SystemConfig/"]
-RUN dotnet restore "./Gateways/Gateways.Ocelot/Gateways.Ocelot.csproj"
+COPY ["Services/VoucherAPI/Voucher.Application/Voucher.Application.csproj", "Services/VoucherAPI/Voucher.Application/"]
+COPY ["Services/VoucherAPI/Voucher.Shared/Voucher.Shared.csproj", "Services/VoucherAPI/Voucher.Shared/"]
+COPY ["Services/VoucherAPI/Voucher.Infrastructure/Voucher.Infrastructure.csproj", "Services/VoucherAPI/Voucher.Infrastructure/"]
+RUN dotnet restore "./Services/VoucherAPI/Voucher.QueryAPI/Voucher.QueryAPI.csproj"
 COPY . .
-WORKDIR "/src/Gateways/Gateways.Ocelot"
-RUN dotnet build "./Gateways.Ocelot.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR "/src/Services/VoucherAPI/Voucher.QueryAPI"
+RUN dotnet build "./Voucher.QueryAPI.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # This stage is used to publish the service project to be copied to the final stage
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Gateways.Ocelot.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./Voucher.QueryAPI.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 # This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Gateways.Ocelot.dll"]
+ENTRYPOINT ["dotnet", "Voucher.QueryAPI.dll"]

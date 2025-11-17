@@ -3,33 +3,36 @@ using Voucher.QueryAPI;
 using Voucher.Application;
 using Voucher.Infrastructure.Data;
 using Voucher.Infrastructure.Data.Extensions;
-using Voucher.Application.Queries.GetVouchers;
-using MediatR;
-using Voucher.Messaging;
+using Voucher.Messaging.Query;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.WebHost.UseUrls("http://localhost:5003");
 
-// DB Read
-builder.Services.AddDbContext<VoucherReadDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("QueryDb")));
+// =========================
+//   Fallback connection string
+// =========================
+var connectionString =
+    builder.Configuration.GetConnectionString("Database")
+    ?? builder.Configuration["ConnectionStrings:DefaultConnection"];
 
-builder.Services.AddVoucherMessaging(builder.Configuration);
+// Inject fallback back into configuration
+builder.Configuration["ConnectionStrings:Database"] = connectionString;
 
-builder.Services.AddInfrastructureServices(builder.Configuration);
+// =========================
+//   Read DB
+// =========================
+builder.Services.AddInfrastructureRead(builder.Configuration);   // không đổi
 
-builder.Services.AddMediatR(cfg =>
-{
-    cfg.RegisterServicesFromAssemblyContaining<GetVouchersHandler>();
-});
-
+builder.Services.AddVoucherQueryMessaging(builder.Configuration);
+builder.Services.AddApplicationQueryServices(builder.Configuration);
 builder.Services.AddQueryApiServices(builder.Configuration);
+builder.Services.AddHealthChecks();
 
 var app = builder.Build();
 
 app.UseQueryApiServices();
-
 await app.InitialiseReadDbAsync();
 
+app.MapHealthChecks("/health");
 app.Run();

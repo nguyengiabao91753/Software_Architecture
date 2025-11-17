@@ -2,35 +2,25 @@ using Carter;
 using Voucher.Application;
 using Voucher.Infrastructure.Data.Extensions;
 using Voucher.CommandAPI;
-using MassTransit;
-using Voucher.Messaging.Consumers.CommandConsumers;  // ⭐ SỬA ĐÚNG NAMESPACE
+using Voucher.Messaging.Command;
 
 var builder = WebApplication.CreateBuilder(args);
 
+//   Fallback connection string
+var connectionString =
+    builder.Configuration.GetConnectionString("Database")
+    ?? builder.Configuration["ConnectionStrings:DefaultConnection"];
+
+// Inject fallback BACK INTO configuration
+builder.Configuration["ConnectionStrings:Database"] = connectionString;
+
+//   SERVICES
 builder.Services
     .AddApplicationCommandServices(builder.Configuration)
-    .AddInfrastructureServices(builder.Configuration)
+    .AddInfrastructureWrite(builder.Configuration)
     .AddCommandApiServices(builder.Configuration);
 
-// MASS TRANSIT
-builder.Services.AddMassTransit(x =>
-{
-    x.AddConsumer<OrderPlacedConsumer>();   // ⭐ Consumer OK
-
-    x.UsingRabbitMq((context, cfg) =>
-    {
-        cfg.Host(builder.Configuration["RabbitMQ:Host"], h =>
-        {
-            h.Username(builder.Configuration["RabbitMQ:Username"]);
-            h.Password(builder.Configuration["RabbitMQ:Password"]);
-        });
-
-        cfg.ReceiveEndpoint("order-placed-voucher-update", e =>
-        {
-            e.ConfigureConsumer<OrderPlacedConsumer>(context);
-        });
-    });
-});
+builder.Services.AddVoucherCommandMessaging(builder.Configuration);
 
 var app = builder.Build();
 

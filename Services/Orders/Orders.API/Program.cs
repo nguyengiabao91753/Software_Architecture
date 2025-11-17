@@ -1,15 +1,12 @@
-using Orders.Application;
+﻿using Orders.Application;
 using Orders.Infrastructure;
 using Orders.Infrastructure.Extensions;
 using Orders.Messaging;
 using Integrations.Messaging.Masstransit;
 using Integrations.Consul.Extension;
+using Shares.SystemConfig.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
-
-
-
-
 
 
 // Add services to the container.
@@ -29,6 +26,10 @@ builder.Services.AddSwaggerGen();
 
 
 
+builder.AddAppAuthentication();
+builder.AddSwaggerWithJWT();
+
+builder.Services.AddHealthChecks();
 
 var app = builder.Build();
 
@@ -40,7 +41,6 @@ if (app.Environment.IsDevelopment())
     await app.InitialiseDatabaseAsync();
 }
 
-app.RegisterWithConsul(builder.Configuration);
 
 
 app.UseHttpsRedirection();
@@ -48,5 +48,9 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+//Đăng ký consul
+app.MapHealthChecks("/health");
+app.RegisterWithConsul(builder.Configuration);
 
 app.Run();

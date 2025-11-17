@@ -10,7 +10,7 @@ services:
       - global-network
   
   rabbitmq:
-    image: rabbitmq:3.9-management
+    image: rabbitmq:3.13-management
     container_name: rabbitmq
     hostname: rabbitmq
     environment:
@@ -51,11 +51,15 @@ services:
       - "7000:7000"
     environment:
       - ASPNETCORE_URLS=http://+:7000
+      - ASPNETCORE_ENVIRONMENT=Development
       - CONSUL_HOST=consul
     depends_on:
       - consul
     networks:
       - global-network
+ 
+
+
   # Order Service-//////////////////////////////////
 
   orders.db:
@@ -95,6 +99,113 @@ services:
     networks:
       - order-network
       - global-network
+
+
+
+  # Auth Service-///////////////////////////////////
+  auth.db:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: auth_db
+    environment:
+    - ACCEPT_EULA=Y
+    - SA_PASSWORD=Admin123*
+    ports:
+    - "1436:1433"
+    networks:
+    - global-network
+
+
+  auth.api:
+    container_name: auth_api
+    build:
+        context: .
+        dockerfile: ./Services/Auth/Auth.API/Dockerfile
+    image: auth-api
+    environment:
+        - ConnectionStrings__Database=Server=auth.db,1433;Database=AuthDb;User Id=sa;Password=Admin123*;TrustServerCertificate=True;
+        - ASPNETCORE_URLS=http://+:7001
+        - ASPNETCORE_ENVIRONMENT=Development
+        - ConsulConfig__Address=http://consul:8500
+        - ConsulConfig__ServiceName=auth-api
+        - ConsulConfig__ServicePort=7001
+    depends_on:
+        - auth.db
+        - consul
+    ports:
+        - "7001:7001"
+    networks:
+        - global-network
+
+   
+  # Voucher Service-///////////////////////////////////
+
+  voucher.write.db:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: voucher_write_db
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Admin123*
+    ports:
+      - "1434:1433"
+    networks:
+      - global-network
+
+
+  voucher.command.api:
+    container_name: voucher_command_api
+    build:
+        context: .
+        dockerfile: ./Services/VoucherAPI/Voucher.CommandAPI/Dockerfile
+    image: voucher-command-api
+    environment:
+        - ConnectionStrings__Database=Server=voucher.write.db,1433;Database=OrderDb;User Id=sa;Password=Admin123*;TrustServerCertificate=True;
+        - ASPNETCORE_URLS=http://+:7004
+        - ASPNETCORE_ENVIRONMENT=Development
+        - ConsulConfig__Address=http://consul:8500
+        - ConsulConfig__ServiceName=voucher-write-api
+        - ConsulConfig__ServicePort=7004
+    depends_on:
+        - voucher.write.db
+        - consul
+        - rabbitmq
+    ports:
+        - "7004:7004"
+    networks:
+        - global-network
+  
+
+  voucher.read.db:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: voucher_read_db
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Admin123*
+    ports:
+      - "1435:1433"
+    networks:
+      - global-network
+  
+  voucher.query.api:
+    container_name: voucher_query_api
+    build:
+        context: .
+        dockerfile: ./Services/VoucherAPI/Voucher.QueryAPI/Dockerfile
+    image: voucher-query-api
+    environment:
+        - ConnectionStrings__Database=Server=voucher.read.db,1433;Database=OrderDb;User Id=sa;Password=Admin123*;TrustServerCertificate=True;
+        - ASPNETCORE_URLS=http://+:7006
+        - ASPNETCORE_ENVIRONMENT=Development
+        - ConsulConfig__Address=http://consul:8500
+        - ConsulConfig__ServiceName=voucher-read-api
+        - ConsulConfig__ServicePort=7006
+    depends_on:
+        - voucher.read.db
+        - consul
+        - rabbitmq
+    ports:
+        - "7006:7006"
+    networks:
+        - global-network
 
 
    # Payment Service-///////////////////////////////////

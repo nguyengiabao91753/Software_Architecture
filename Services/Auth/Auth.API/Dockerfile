@@ -4,26 +4,27 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 USER $APP_UID
 WORKDIR /app
-EXPOSE 7000
+EXPOSE 7001
 
 
 # This stage is used to build the service project
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Gateways/Gateways.Ocelot/Gateways.Ocelot.csproj", "Gateways/Gateways.Ocelot/"]
-RUN dotnet restore "./Gateways/Gateways.Ocelot/Gateways.Ocelot.csproj"
+COPY ["Services/Auth/Auth.API/Auth.API.csproj", "Services/Auth/Auth.API/"]
+COPY ["Integrations/Integrations.Consul/Integrations.Consul.csproj", "Integrations/Integrations.Consul/"]
+RUN dotnet restore "./Services/Auth/Auth.API/Auth.API.csproj"
 COPY . .
-WORKDIR "/src/Gateways/Gateways.Ocelot"
-RUN dotnet build "./Gateways.Ocelot.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR "/src/Services/Auth/Auth.API"
+RUN dotnet build "./Auth.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # This stage is used to publish the service project to be copied to the final stage
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Gateways.Ocelot.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./Auth.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 # This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Gateways.Ocelot.dll"]
+ENTRYPOINT ["dotnet", "Auth.API.dll"]

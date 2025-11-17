@@ -1,26 +1,22 @@
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Voucher.Messaging.Consumers.CommandConsumers;
 using Voucher.Messaging.Consumers.QueryConsumers;
 
-namespace Voucher.Messaging;
+namespace Voucher.Messaging.Query;
 
-public static class DependencyInjection
+public static class QueryMessaging
 {
-    public static IServiceCollection AddVoucherMessaging(this IServiceCollection services, IConfiguration cfg)
+    public static IServiceCollection AddVoucherQueryMessaging(this IServiceCollection services, IConfiguration cfg)
     {
         services.AddMassTransit(x =>
         {
-            // COMMAND SIDE (WriteDB)
-            x.AddConsumer<OrderPlacedConsumer>();
-
-            // QUERY SIDE (ReadDB)
             x.AddConsumer<VoucherCreatedConsumer>();
             x.AddConsumer<VoucherStatusUpdatedConsumer>();
             x.AddConsumer<VoucherUsageIncreasedConsumer>();
 
-            // RabbitMQ Config
+            x.SetEndpointNameFormatter(new DefaultEndpointNameFormatter(false));
+
             x.UsingRabbitMq((context, rabbit) =>
             {
                 rabbit.Host(cfg["RabbitMQ:Host"] ?? "localhost", h =>
@@ -29,13 +25,6 @@ public static class DependencyInjection
                     h.Password(cfg["RabbitMQ:Password"] ?? "guest");
                 });
 
-                // COMMAND QUEUE
-                rabbit.ReceiveEndpoint("order-placed-voucher-update", e =>
-                {
-                    e.ConfigureConsumer<OrderPlacedConsumer>(context);
-                });
-
-                // QUERY PROJECTION QUEUES
                 rabbit.ReceiveEndpoint("voucher-created-queue", e =>
                 {
                     e.ConfigureConsumer<VoucherCreatedConsumer>(context);
