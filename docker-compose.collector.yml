@@ -1,0 +1,19 @@
+version: "3.9"
+
+services:
+  otel-collector:
+    image: otel/opentelemetry-collector:latest
+    container_name: otel-collector
+    restart: unless-stopped
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel/collector-config.yaml
+    command: ["--config=/etc/otel/collector-config.yaml"]
+    ports:
+      - "4317:4317"   # OTLP gRPC
+      - "4318:4318"   # OTLP HTTP
+    networks:
+      - global-network
+
+networks:
+  global-network:
+    external: true
