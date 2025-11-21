@@ -6,9 +6,16 @@ services:
     ports:
       - "8500:8500"
     command: ["agent", "-dev", "-client=0.0.0.0"]
+    
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8500/v1/status/leader"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    
     networks:
       - global-network
-  
+
   rabbitmq:
     image: rabbitmq:3.13-management
     container_name: rabbitmq

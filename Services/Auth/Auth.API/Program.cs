@@ -10,40 +10,45 @@ using Integrations.Consul.Extension;
 using SecShare.Servicer.Auth;
 using Consul;
 
+using Prometheus;
+
 var builder = WebApplication.CreateBuilder(args);
 
-
-var connectionString = builder.Configuration.GetConnectionString("Database") ?? builder.Configuration["ConnectionStrings:DefaultConnection"];
+// Database
+var connectionString = builder.Configuration.GetConnectionString("Database")
+    ?? builder.Configuration["ConnectionStrings:DefaultConnection"];
 
 builder.Services.AddDbContext<IdentityApplicationDbContext>(options =>
-   options.UseSqlServer(connectionString)
-   );
+    options.UseSqlServer(connectionString));
 
-builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("ApiSettings:JwtOptions"));
-
+// Identity
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
     options.User.RequireUniqueEmail = true;
-}).AddEntityFrameworkStores<IdentityApplicationDbContext>().AddDefaultTokenProviders();
+})
+.AddEntityFrameworkStores<IdentityApplicationDbContext>()
+.AddDefaultTokenProviders();
 
+// JWT + Services
+builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("ApiSettings:JwtOptions"));
 
-// Add services to the container.
+builder.Services.AddScoped<IAuthAPIService, AuthAPIService>();
+builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 
+// Controllers + Swagger
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<IAuthAPIService, AuthAPIService>();
-
-builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
-
+// Health Check
 builder.Services.AddHealthChecks();
-
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Prometheus Middleware (bắt buộc)
+app.UseHttpMetrics();
+
+// Pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -52,13 +57,13 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
 
-//Đăng ký consul
+// Consul + Healthcheck
 app.MapHealthChecks("/health");
 app.RegisterWithConsul(builder.Configuration);
 
+// Expose endpoint cho Prometheus
+app.MapMetrics("/metrics");
 app.Run();
