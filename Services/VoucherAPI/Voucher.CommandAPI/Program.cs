@@ -4,6 +4,7 @@ using Voucher.Infrastructure.Data.Extensions;
 using Voucher.CommandAPI;
 using Voucher.Messaging.Command;
 using Integrations.Consul.Extension;
+using Integrations.OpenTelemetry.Extension;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +23,8 @@ builder.Services
     .AddCommandApiServices(builder.Configuration);
 
 builder.Services.AddVoucherCommandMessaging(builder.Configuration);
+
+builder.Services.AddCustomOpenTelemetry("Voucher.CommandAPI");
 
 var app = builder.Build();
 

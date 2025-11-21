@@ -5,6 +5,7 @@ using Orders.Messaging;
 using Integrations.Messaging.Masstransit;
 using Integrations.Consul.Extension;
 using Shares.SystemConfig.Authentication;
+using Integrations.OpenTelemetry.Extension;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +32,7 @@ builder.AddSwaggerWithJWT();
 
 
 builder.Services.AddHealthChecks();
+builder.Services.AddCustomOpenTelemetry("Orders.API");
 
 var app = builder.Build();
 

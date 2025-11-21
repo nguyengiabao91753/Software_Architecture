@@ -2,6 +2,7 @@ using Integrations.Messaging.Masstransit;
 using Payment.Messaging;
 using Payment.Messaging.Consumer;
 using Integrations.Consul.Extension;
+using Integrations.OpenTelemetry.Extension;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,6 +36,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddHealthChecks();
 
+builder.Services.AddCustomOpenTelemetry("Payment.API");
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
