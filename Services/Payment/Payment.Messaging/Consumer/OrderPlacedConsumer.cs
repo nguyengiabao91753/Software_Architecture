@@ -21,7 +21,25 @@ public class OrderPlacedConsumer : IConsumer<OrderPlacedEvent>
     {
         Console.WriteLine($"OrderPlacedEvent received: {context.Message}");
 
-       
-        //await _httpClient.PutAsJsonAsync($"/api/orders/paid", context.Message.OrderId.ToString());
+        try
+        {
+
+            var rs= await _httpClient.PutAsJsonAsync($"/api/order/paid", context.Message.OrderId.ToString());
+
+            if (rs.IsSuccessStatusCode)
+            {
+                await context.Publish(new PaymentSuceessded(context.Message.OrderId));
+            }
+            else
+            {
+                Console.WriteLine($"Failed to mark order {context.Message.OrderId} as paid. Status Code: {rs.StatusCode}");
+                await context.Publish(new PaymentFailed(context.Message.OrderId, "Failed to mark order as paid"));
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error processing OrderPlacedEvent: {ex.Message}");
+            await context.Publish(new PaymentFailed(context.Message.OrderId, "Failed to mark order as paid"));
+        }
     }
 }

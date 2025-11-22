@@ -1,5 +1,6 @@
 ﻿
 using Integrations.Messaging.Events;
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Orders.Application.Data;
 using Orders.Application.Dtos;
@@ -7,19 +8,17 @@ using Orders.Application.IServices;
 using Orders.Application.Mapping;
 using Orders.Domain.Models;
 using Orders.Domain.ValueObjects;
-using Orders.Messaging.Interfaces;
-
 namespace Services.OrderAPI.Application.Services;
 
 public class OrderService : IOrderService
 {
     private readonly IApplicationDbContext _db;
-    private readonly IOrderEventPublisher _eventPublisher;
+    private readonly IPublishEndpoint _publishEndpoint;
 
-    public OrderService(IApplicationDbContext db, IOrderEventPublisher eventPublisher)
+    public OrderService(IApplicationDbContext db, IPublishEndpoint eventPublisher)
     {
         _db = db;
-        _eventPublisher = eventPublisher;
+        _publishEndpoint = eventPublisher;
     }
 
     public async Task<ResultService<List<OrderDto>>> GetAllOrders()
@@ -138,10 +137,9 @@ public class OrderService : IOrderService
                     }).ToList()
                 };
 
-                await _eventPublisher.PublishOrderPlacedAsync(orderPlcedEvent);
+                await _publishEndpoint.Publish(orderPlcedEvent);
 
-                // gọi api payment
-                // payment trả về 200 -> gọi tiếp api inventory -> inventory trả về 200 ->....
+               
 
                 transaction.Commit();
                 rs.Data = OrderMappingData.ToOrderDto(newOrder);
@@ -159,8 +157,36 @@ public class OrderService : IOrderService
         return rs;
     }
 
-    public Task<ResultService<OrderDto>> Update(OrderDto order)
+    public async Task<ResultService<OrderDto>> Update(OrderDto order)
     {
-        throw new NotImplementedException();
+        var rs = new ResultService<OrderDto>();
+        using (var transaction = _db.Database.BeginTransaction())
+        {
+            try
+            {
+                var oldOrder = _db.Orders
+                    .Include(o => o.OrderItems)
+                    .FirstOrDefault(o => o.Id == OrderId.Of(order.Id));
+
+                oldOrder!.UpdateOrderStatus(order.OrderStatus);
+
+                
+                await _db.SaveChangesAsync();
+
+
+                transaction.Commit();
+                rs.Data = OrderMappingData.ToOrderDto(oldOrder);
+                rs.IsSuccess = true;
+                rs.Message = "Order updated successfully";
+
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+                rs.IsSuccess = false;
+                rs.Message = ex.Message;
+            }
+        }
+        return rs;
     }
 }

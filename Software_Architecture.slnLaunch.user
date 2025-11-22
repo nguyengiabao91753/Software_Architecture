@@ -3,7 +3,15 @@
     "Name": "New Profile",
     "Projects": [
       {
-        "Path": "Services\\VoucherAPI\\Voucher.QueryAPI\\Voucher.QueryAPI.csproj",
+        "Path": "Services\\Orders\\Orders.API\\Orders.API.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "Services\\Payment\\Payment.API\\Payment.API.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "Services\\Orders\\Orders.Orchestrator\\Orders.Orchestrator.csproj",
         "Action": "Start"
       },
       {

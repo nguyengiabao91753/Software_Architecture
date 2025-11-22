@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using MassTransit;
+using Microsoft.Extensions.DependencyInjection;
+using Orders.Messaging.Consumers;
 using Orders.Messaging.Interfaces;
 using Orders.Messaging.Publishers;
 using System;
@@ -12,7 +14,11 @@ public static class DependenciesInjection
 {
     public static IServiceCollection AddOrderMessaging(this IServiceCollection services)
     {
-        services.AddScoped<IOrderEventPublisher, OrderEventPublisher>();
+        services.AddMassTransit(x =>
+        {
+            x.AddConsumer<OrderEventConsumer>();
+            // Other consumers can be added here
+        });
 
         return services;
     }

@@ -29,7 +29,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\Integrations\Integrations.Consul\Integrations.Consul.csproj" />
     <ProjectReference Include="..\..\..\Shares\Shares.SystemConfig\Shares.SystemConfig.csproj" />
-    <ProjectReference Include="..\Orders.Application\Orders.Application.csproj" />
     <ProjectReference Include="..\Orders.Infrastructure\Orders.Infrastructure.csproj" />
     <ProjectReference Include="..\Orders.Messaging\Orders.Messaging.csproj" />
   </ItemGroup>

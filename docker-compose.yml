@@ -21,8 +21,50 @@ services:
       - "15672:15672"  
     networks:
       - global-network
+  
 
-    
+  mongodb:
+    image: mongo:7
+    container_name: mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example123
+    networks:
+        - global-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+
+  mongo-express: 
+    image: mongo-express
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongodb          # tên container mongo
+      ME_CONFIG_MONGODB_PORT: 27017
+      ME_CONFIG_MONGODB_ENABLE_ADMIN: "true"
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: example123
+      ME_CONFIG_MONGODB_AUTH_DATABASE: admin     # ← QUAN TRỌNG NHẤT: chỉ định database auth là admin
+      ME_CONFIG_BASICAUTH_USERNAME: admin        # ← (tùy chọn) login mongo-express bằng user/pass này
+      ME_CONFIG_BASICAUTH_PASSWORD: admin123
+    depends_on:
+      mongodb:
+        condition: service_healthy 
+    networks:
+      - global-network
+
+
+   # Health Check-//////////////////////////////////// 
   health-check:
     image: health-check
     container_name: health_check
@@ -64,7 +106,9 @@ services:
       - voucher.query.api
     networks:
       - global-network
- 
+
+
+  
 
 
   # Order Service-//////////////////////////////////
@@ -108,7 +152,29 @@ services:
     networks:
       - global-network
 
-
+    # Order Orchestration-////////////////////////////////////
+  order.orchestration:
+     container_name: order-orchestration
+     build:
+        context: .
+        dockerfile: ./Services/Orders/Orders.Orchestrator/Dockerfile
+     image: order-orchestration
+     environment:
+        - ASPNETCORE_URLS=http://+:7033
+        - ASPNETCORE_ENVIRONMENT=Development
+        - SagaSettings__MongoDbConnection=mongodb://root:example123@mongodb:27017
+        - SagaSettings__DatabaseName=food_delivery_saga
+     depends_on:
+        mongodb:
+            condition: service_healthy  
+        rabbitmq:
+            condition: service_started
+        consul:
+            condition: service_started
+     ports:
+        - "7033:7033"
+     networks:
+        - global-network
 
   # Auth Service-///////////////////////////////////
   auth.db:
@@ -244,7 +310,8 @@ services:
     networks:
         - global-network
 
-
+volumes:
+  mongo-data:
 
 networks:
   auth-network:

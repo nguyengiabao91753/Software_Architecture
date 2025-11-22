@@ -1,9 +1,10 @@
-﻿using Orders.Application;
+﻿using Integrations.Consul.Extension;
+using Integrations.Messaging.Events;
+using Integrations.Messaging.Masstransit;
+using Orders.Application;
 using Orders.Infrastructure;
 using Orders.Infrastructure.Extensions;
 using Orders.Messaging;
-using Integrations.Messaging.Masstransit;
-using Integrations.Consul.Extension;
 using Shares.SystemConfig.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);

@@ -11,6 +11,8 @@ public static class DependenciesInjection
     {
         services.AddMassTransit(x =>
         {
+            x.SetKebabCaseEndpointNameFormatter();
+
             x.AddConsumer<OrderPlacedConsumer, OrderPlacedConsumerDefinition>();
             x.UsingRabbitMq((context, configurator) =>
             {

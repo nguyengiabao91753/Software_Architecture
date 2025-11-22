@@ -12,6 +12,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Integrations\Integrations.Messaging\Integrations.Messaging.csproj" />
+    <ProjectReference Include="..\Orders.Application\Orders.Application.csproj" />
+
   </ItemGroup>
 
 </Project>

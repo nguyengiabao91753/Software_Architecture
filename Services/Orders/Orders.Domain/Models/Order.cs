@@ -60,9 +60,16 @@ public class Order : Aggregate<OrderId>
         _orderItems.Add(orderItem);
     }
 
-    public void UpdateOrderStatus(OrderStatus status)
+    public void UpdateOrderStatus(string status)
     {
-        OrderStatus = status;
+        if (Enum.TryParse<OrderStatus>(status, ignoreCase: true, out var result))
+        {
+            OrderStatus = result;
+        }
+        else
+        {
+            throw new ArgumentException($"Giá trị '{status}' không hợp lệ cho OrderStatus.");
+        }
     }
 
 

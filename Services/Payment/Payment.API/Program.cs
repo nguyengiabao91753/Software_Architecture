@@ -1,7 +1,8 @@
+﻿using Integrations.Consul.Extension;
+using Integrations.Messaging.Events;
 using Integrations.Messaging.Masstransit;
 using Payment.Messaging;
 using Payment.Messaging.Consumer;
-using Integrations.Consul.Extension;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,7 +18,11 @@ builder.Services.AddHttpClient("OrdersApi", client =>
 
 //Add Masstransit Message Broker
 builder.Services.AddPaymentMessaging(builder.Configuration);
-//builder.Services.AddMessageBroker(builder.Configuration, typeof(OrderPlacedConsumer).Assembly);
+//builder.Services.AddMessageBroker(builder.Configuration, new[]
+//{
+//    typeof(OrderPlacedConsumer).Assembly,
+//    typeof(OrderPlacedEvent).Assembly       // ← cũng thêm vào để biết publish topology
+//});
 
 
 

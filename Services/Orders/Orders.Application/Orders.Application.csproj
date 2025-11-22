@@ -7,12 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MassTransit" Version="8.5.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.20" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Integrations\Integrations.Messaging\Integrations.Messaging.csproj" />
     <ProjectReference Include="..\Orders.Domain\Orders.Domain.csproj" />
-    <ProjectReference Include="..\Orders.Messaging\Orders.Messaging.csproj" />
   </ItemGroup>
 
 </Project>

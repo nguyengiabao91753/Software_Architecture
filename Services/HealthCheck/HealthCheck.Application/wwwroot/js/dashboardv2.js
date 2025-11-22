@@ -23,18 +23,31 @@ async function loadData() {
     ]);
 }
 
+function parseHealthStatus(check) {
+    if (!check) return "Unknown";
+
+    // Nếu check.status là Consul.HealthStatus, parse từ output
+    if (check.status === "Consul.HealthStatus") {
+        const match = check.output.match(/Output:\s*(\w+)/);
+        if (match) return match[1]; // "Healthy" / "Degraded" / "Unhealthy"
+    }
+
+    return check.status;
+}
+
+
 // Load Consul data for Services UI
 async function loadServices() {
     const consul = await fetchJson(CONSUL_SERVICES);
 
     servicesData = consul.map(s => {
         const node = s.nodes?.[0];
-        const check = node?.checks?.[0];
+        const check = node?.checks?.[1];
 
         return {
             id: s.service,
             name: s.service,
-            status: check?.status ?? 'Unknown',
+            status: parseHealthStatus(check),
             duration: check?.output ?? '',
             port: node?.port ?? '',
             endpoint: `${node?.address}:${node?.port}`,
@@ -132,7 +145,17 @@ function renderServices() {
 let chartInstance = null;
 
 function renderHealthChart(summary) {
-    const ctx = document.getElementById("healthChart").getContext("2d");
+    const canvas = document.getElementById("healthChart");
+    if (!canvas) {
+        console.warn("healthChart not found");
+        return;
+    }
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) {
+        console.warn("Canvas context not ready");
+        return;
+    }
 
     if (chartInstance) chartInstance.destroy();
 
