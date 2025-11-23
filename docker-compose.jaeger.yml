@@ -7,12 +7,13 @@ services:
     ports:
       - "16686:16686"    # Jaeger UI
       - "6831:6831/udp"  # agent/UDP (thrift) for libraries
-      - "4317:4317"      # OTLP gRPC
+      # - "4317:4317"      # OTLP nhận trance 
       - "4318:4318"      # OTLP HTTP
-      - "14268:14268"    # collector HTTP
+      # - "14268:14268"    # collector HTTP
+      # - "42150:14250"    # collector gRPC
     networks:
-      - global-network
+      - software_architecture_global-network
 
 networks:
-  global-network:
+  software_architecture_global-network:
     external: true
