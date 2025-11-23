@@ -1,22 +1,17 @@
-﻿using Integrations.Consul.Extension;
+﻿using Prometheus;
+using Integrations.Consul.Extension;
 using Integrations.Messaging.Events;
 using Integrations.Messaging.Masstransit;
 using Payment.Messaging;
+using Integrations.Consul.Extension;
 using Payment.Messaging.Consumer;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
+// Monitoring
 builder.Services.AddControllers();
 
-builder.Services.AddHttpClient("OrdersApi", client =>
-{
-    client.BaseAddress = new Uri(builder.Configuration["Services:OrdersApi"]);
-});
-
-
-//Add Masstransit Message Broker
+// Add MassTransit
 builder.Services.AddPaymentMessaging(builder.Configuration);
 //builder.Services.AddMessageBroker(builder.Configuration, new[]
 //{
@@ -24,38 +19,30 @@ builder.Services.AddPaymentMessaging(builder.Configuration);
 //    typeof(OrderPlacedEvent).Assembly       // ← cũng thêm vào để biết publish topology
 //});
 
-
-
-
-
-
-
-
-
-
-
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
 builder.Services.AddHealthChecks();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
+// Prometheus middleware
+app.UseMetricServer();
+app.UseHttpMetrics();
 
+app.UseAuthorization();
 app.MapControllers();
 app.MapHealthChecks("/health");
+
+// Consul
 app.RegisterWithConsul(builder.Configuration);
 
 app.Run();

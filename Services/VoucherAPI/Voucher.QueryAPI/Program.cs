@@ -5,39 +5,38 @@ using Voucher.Infrastructure.Data;
 using Voucher.Infrastructure.Data.Extensions;
 using Voucher.Messaging.Query;
 using Integrations.Consul.Extension;
+using Prometheus;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//builder.WebHost.UseUrls("http://localhost:5003");
-
-// =========================
-//   Fallback connection string
-// =========================
+// Fallback connection string
 var connectionString =
     builder.Configuration.GetConnectionString("Database")
     ?? builder.Configuration["ConnectionStrings:DefaultConnection"];
 
-// Inject fallback back into configuration
 builder.Configuration["ConnectionStrings:Database"] = connectionString;
 
-// =========================
-//   Read DB
-// =========================
-builder.Services.AddInfrastructureRead(builder.Configuration);   // không đổi
-
+// Add Services 
+builder.Services.AddInfrastructureRead(builder.Configuration);
 builder.Services.AddVoucherQueryMessaging(builder.Configuration);
 builder.Services.AddApplicationQueryServices(builder.Configuration);
 builder.Services.AddQueryApiServices(builder.Configuration);
-
 
 builder.Services.AddHealthChecks();
 
 var app = builder.Build();
 
+// Prometheus Middleware
+app.UseMetricServer();   
+app.UseHttpMetrics();  
+
+// API + Init Database
 app.UseQueryApiServices();
 await app.InitialiseReadDbAsync();
 
+// Health Check + Consul
 app.MapHealthChecks("/health");
+app.MapMetrics("/metrics");
 app.RegisterWithConsul(builder.Configuration);
 
 app.Run();

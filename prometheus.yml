@@ -1,0 +1,46 @@
+global:
+  scrape_interval: 5s
+
+scrape_configs:
+
+  # ===== Health Check =====
+  - job_name: 'health-check'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['health-check:9000']
+
+  # ===== API Gateway =====
+  - job_name: 'api-gateway'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['api-gateway:7000']
+
+  # ===== Auth Service =====
+  - job_name: 'auth-api'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['auth-api:7001']
+
+  # ===== Orders Service =====
+  - job_name: 'orders-api'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['orders-api:7003']
+
+  # ===== Payment Service =====
+  - job_name: 'payment-api'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['payment-api:7005']
+
+  # ===== Voucher Command =====
+  - job_name: 'voucher-command-api'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['voucher-command-api:7004']
+
+  # ===== Voucher Query =====
+  - job_name: 'voucher-query-api'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['voucher-query-api:7006']
