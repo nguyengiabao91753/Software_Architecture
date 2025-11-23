@@ -13,6 +13,6 @@ services:
     networks:
       - global-network
 
-networks:
-  global-network:
-    external: true
+# networks:
+#   global-network:
+#     external: true

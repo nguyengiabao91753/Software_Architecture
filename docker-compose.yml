@@ -319,23 +319,36 @@ services:
 
 
  
-  jaeger:
-    image: jaegertracing/all-in-one:1.54
-    container_name: jaeger
-    environment:
-      COLLECTOR_ZIPKIN_HTTP_PORT: 9411
-    ports:
-      - "16686:16686"    # Jaeger UI
-      - "6831:6831/udp"  # agent/UDP (thrift)
-      - "4317:4317"      # OTLP gRPC
-      - "4318:4318"      # OTLP HTTP
-      - "14268:14268"    # collector HTTP
-    networks:
-      - global-network
+  # jaeger:
+  #   image: jaegertracing/all-in-one:1.54
+  #   container_name: jaeger
+  #   environment:
+  #     COLLECTOR_ZIPKIN_HTTP_PORT: 9411
+  #   ports:
+  #     - "16686:16686"    Jaeger UI
+  #     - "6831:6831/udp"  agent/UDP (thrift)
+  #     - "4317:4317"      OTLP gRPC
+  #     - "4318:4318"      OTLP HTTP
+  #     - "14268:14268"    collector HTTP
+  #   networks:
+  #     - global-network
+
 
 
 volumes:
   mongo-data:
+
+
+
+
+# File: docker-compose.observability.yml (đặt ở root)
+include:
+  - docker-compose.jaeger.yml
+  # - docker-compose.collector.yml
+  - docker-compose.prometheus.yml
+  - docker-compose.grafana.yml
+
+
 
 networks:
   auth-network:
@@ -346,3 +359,8 @@ networks:
     driver: bridge
   global-network:
     driver: bridge
+    name: global
+    external: false
+  
+
+

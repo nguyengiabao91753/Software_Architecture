@@ -1,4 +1,4 @@
-version: "3.9"
+﻿# version: "3.9"
 
 services:
   otel-collector:
@@ -9,11 +9,15 @@ services:
       - ./otel-collector-config.yaml:/etc/otel/collector-config.yaml
     command: ["--config=/etc/otel/collector-config.yaml"]
     ports:
-      - "4317:4317"   # OTLP gRPC
-      - "4318:4318"   # OTLP HTTP
+      - "4317:4317"   
+      - "4318:4318"   
+    depends_on:
+      - jaeger
     networks:
       - global-network
+   
 
-networks:
-  global-network:
-    external: true
+
+# networks:
+#   global-network:
+#     external: true

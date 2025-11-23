@@ -12,6 +12,14 @@ var builder = WebApplication.CreateBuilder(args);
 // Monitoring
 builder.Services.AddControllers();
 
+
+builder.Services.AddHttpClient("OrdersApi", client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["Services:OrdersApi"]);
+});
+
+
+
 // Add MassTransit
 builder.Services.AddPaymentMessaging(builder.Configuration);
 //builder.Services.AddMessageBroker(builder.Configuration, new[]
