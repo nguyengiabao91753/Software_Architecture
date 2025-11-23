@@ -5,6 +5,7 @@ using Voucher.Infrastructure.Data;
 using Voucher.Infrastructure.Data.Extensions;
 using Voucher.Messaging.Query;
 using Integrations.Consul.Extension;
+using Integrations.OpenTelemetry.Extension;
 using Prometheus;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,6 +24,8 @@ builder.Services.AddApplicationQueryServices(builder.Configuration);
 builder.Services.AddQueryApiServices(builder.Configuration);
 
 builder.Services.AddHealthChecks();
+
+builder.Services.AddCustomOpenTelemetry("Voucher.QueryAPI");
 
 var app = builder.Build();
 

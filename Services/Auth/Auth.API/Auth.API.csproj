@@ -12,9 +12,15 @@
 
   <ItemGroup>
     <PackageReference Include="Consul" Version="1.7.14.9" />
+    <PackageReference Include="MassTransit" Version="8.5.5" />
+    <PackageReference Include="MassTransit.RabbitMQ" Version="8.5.5" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
-	  <PackageReference Include="prometheus-net.AspNetCore" Version="8.2.1" />
-	  <PackageReference Include="prometheus-net.SystemMetrics" Version="3.1.0" />
+    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.14.0" />
+    <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.14.0" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.14.0" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.14.0" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.SqlClient" Version="1.9.0-beta.1" />
+	 
     <PackageReference Include="prometheus-net.AspNetCore" Version="8.2.1" />
     <PackageReference Include="prometheus-net.SystemMetrics" Version="3.1.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
@@ -40,6 +46,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Integrations\Integrations.Consul\Integrations.Consul.csproj" />
+    <ProjectReference Include="..\..\..\Integrations\Integrations.OpenTelemetry\Integrations.OpenTelemetry.csproj" />
   </ItemGroup>
 
 </Project>

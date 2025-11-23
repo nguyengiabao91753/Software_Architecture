@@ -6,6 +6,7 @@ using AuthAPI.Services.IServices;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Integrations.Consul.Extension;
+using Integrations.OpenTelemetry.Extension;
 
 using SecShare.Servicer.Auth;
 using Consul;
@@ -42,6 +43,7 @@ builder.Services.AddSwaggerGen();
 
 // Health Check
 builder.Services.AddHealthChecks();
+builder.Services.AddCustomOpenTelemetry("Auth.API");
 
 var app = builder.Build();
 

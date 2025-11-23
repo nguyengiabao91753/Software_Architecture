@@ -6,6 +6,7 @@ using Orders.Infrastructure;
 using Orders.Infrastructure.Extensions;
 using Orders.Messaging;
 using Shares.SystemConfig.Authentication;
+using Integrations.OpenTelemetry.Extension;
 
 using Prometheus; // Prometheus middleware
 
@@ -26,6 +27,7 @@ builder.AddAppAuthentication();
 builder.AddSwaggerWithJWT();
 
 builder.Services.AddHealthChecks();
+builder.Services.AddCustomOpenTelemetry("Orders.API");
 
 var app = builder.Build();
 

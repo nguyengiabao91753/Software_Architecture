@@ -4,6 +4,7 @@ using Integrations.Messaging.Events;
 using Integrations.Messaging.Masstransit;
 using Payment.Messaging;
 using Integrations.Consul.Extension;
+using Integrations.OpenTelemetry.Extension;
 using Payment.Messaging.Consumer;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,6 +25,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHealthChecks();
 
+builder.Services.AddCustomOpenTelemetry("Payment.API");
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
