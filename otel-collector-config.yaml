@@ -7,19 +7,27 @@ receivers:
         endpoint: 0.0.0.0:4318
 
 exporters:
-  otlp/jaeger:
-    endpoint: "jaeger:14250"
-    tls:
-      insecure: true
-  debug:
+ otlphttp/jaeger:
+    endpoint: "http://jaeger:4318"
+ debug:
     verbosity: detailed
 
 processors:
   batch:
+  memory_limiter:
+    check_interval: 5s
+    limit_percentage: 75
+    spike_limit_percentage: 25
+
+extensions:
+  health_check:
+  pprof:
+  zpages:
 
 service:
+  extensions: [health_check, pprof, zpages]
   pipelines:
     traces:
       receivers: [otlp]
-      processors: [batch]
-      exporters: [otlp/jaeger, debug]
+      processors: [memory_limiter,batch]
+      exporters: [otlphttp/jaeger, debug]

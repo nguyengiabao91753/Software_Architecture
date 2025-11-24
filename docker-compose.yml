@@ -344,7 +344,7 @@ volumes:
 # File: docker-compose.observability.yml (đặt ở root)
 include:
   - docker-compose.jaeger.yml
-  # - docker-compose.collector.yml
+  - docker-compose.collector.yml
   - docker-compose.prometheus.yml
   - docker-compose.grafana.yml
 
