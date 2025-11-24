@@ -28,7 +28,7 @@ namespace Integrations.OpenTelemetry.Extension
                         {
                             // Jaeger đang chạy ở docker? 
                             // Nếu dùng Jaeger Collector thì giữ nguyên
-                            opt.Endpoint = new Uri("http://jaeger:4317");
+                            opt.Endpoint = new Uri("http://otel-collector:4317");
                         });
                 });
 
